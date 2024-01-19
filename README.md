@@ -25,40 +25,40 @@ The russian version of the task can be found in the repository.
 
 ![3DViewer](misc/images/3dviewer.png)
 
-Somewhere near the water cooler in '90:
+Somewhere around the water cooler in the '90s:
 
 *-- We can't make a cartoon about animals.*
 
-*- Why the hell not? John, your 'Tin Toy' has made a splash! Imagine what will happen when the world sees something like '101 Dalmatians' in 3D!*
+*- Why the hell not? John, your 'Tin Toy' has made a big splash! Imagine what will happen when the world sees something like '101 Dalmatians' in 3D!*
 
-*-- Well, that’s the problem. There is not yet enough computational power to animate complex objects. The animals would have to wait, because it’s not possible to simulate their fur. Either it will be a cartoon about bald animals. We have to wait a few years for Moore's Law to work its way through.*
+*-- Well, that's the problem. There is not yet enough computing power to animate complex objects. The animals would have to wait because you can't simulate their fur. Either it will be a cartoon about bald animals. We have to wait a few years for Moore's Law to kick in.*
 
-*- Well, okay, what about people? Why can’t we make a cartoon about people?*
+*- Well, okay, what about humans? Why can't we do a cartoon about people?*
 
-*-- We can, except it would be a horror movie, because their faces will look the same as yours now, trying to convince me to make a fatal mistake.*
+*-- We can, except it would be a horror film, because their faces would look like yours right now, trying to convince me to make a fatal mistake.*
 
-You realised that Lasseter's arguments were too convincing and there was no point in arguing.
+You realised that Lasseter's arguments were too convincing and that there was no point in arguing.
 
-*- Fine, let’s say you’re right. But what cartoon should we make?*
+*- Fine, let's say you're right. But what cartoon should we make?*
 
-*-- It's simple, my friend. It will be a cartoon about toys, like the short one that brought us the Oscar. The natural shape of the toys will fit perfectly with the low-poly 3D models we're able to animate. And these are toys after all, so poor facial expressions won't be critical. And there's already a plot in my mind. Let's bring them to life! The story will be based on the relationship between the toys and the child.*
+*-- That's easy, my friend. It will be a cartoon about toys, like the one that won us the Oscar. The natural shape of the toys will lend itself perfectly to the low-poly 3D models we'll be able to animate. And they're toys, so bad facial expressions won't be a problem. And I've already got a plot in mind. Let's bring it to life! The story will be based on the relationship between the toys and the child.*
 
 *- Sounds interesting!*
 
-*-- It is. You should go to your team asap and start developing 3D modelling software. If we want to make this cartoon, we need our own software tools. The ones that on the market will only allow us to animate a wooden pyramid, and even then in the form of a cube.*
+*-- It is. You should go to your team and start developing 3D modelling software as soon as possible. If we want to make this cartoon, we need our own software tools. The ones on the market will only allow us to animate a wooden pyramid, and then only in the form of a cube.*
 
 *- Okay, but first, we need to do the most important thing - the preview screen.*
 
 *-- Good luck!*
 
-Pixar had over 100 computers to render the 3d scenes. Recognising the potential of such power, you gave an inspirational speech to your team praising 3D visualisation technology and then quickly got to work! This cartoon is destined to make history...
+Pixar had over 100 computers to render the 3D scenes. Recognising the potential of such power, you gave an inspirational speech to your team praising 3D visualisation technology and then got straight to work! This cartoon will go down in history...
 
 
 ## Chapter I
 
 ## Introduction
 
-In this project you will implement a program to view 3D wireframe models (3D Viewer) in the C programming language. The models themselves must be loaded from .obj files and be viewable on the screen with the ability to rotate, scale and translate.
+In this project you will implement a program for viewing 3D wireframe models (3D Viewer) in the C programming language. The models themselves must be loaded from .obj files and be viewable on screen with the ability to rotate, scale and translate
 
 
 ## Chapter II
@@ -110,14 +110,14 @@ The example of .obj file format:
   o Object1
   ```
 
-In this project, you will only need to implement vertices and surfaces list support. Everything else is optional.
+In this project you only need to implement support for vertex and face lists. Everything else is optional.
 
 ### Affine transformations
 
-This section will describe basic affine transformations (translation, rotation, scaling) in the plane, using two-dimensional objects (images) as an example. Similarly, affine transformations can also be used for three-dimensional space.
+This section describes basic affine transformations (translation, rotation, scaling) in the plane, using two-dimensional objects (images) as an example. Similarly, affine transformations can also be used for three-dimensional space.
 
-An affine transformation is a mapping in a plane or space onto itself in which parallel lines transforms into parallel lines, intersecting lines into intersecting lines, and skew lines into skew lines.
-A transformation in a plane is called affine if it is mutually unambiguous and the image of any line is a line. A transformation (mapping) is called mutually unambiguous (bijective) if it converts different points to different ones, and each point is converted to a point.
+An affine transformation is a mapping in a plane or in space onto itself, in which parallel lines become parallel lines, intersecting lines become intersecting lines, and oblique lines become oblique lines.
+A transformation in a plane is called affine if it is mutually unambiguous and the image of any line is a line. A transformation (mapping) is called mutually unambiguous (bijective) if it transforms different points into different points, and each point is transformed into a point.
 
 In algebraic terms, an affine transformation is a transformation of the form _f(x) = M x + v_, where _M_ is some invertible matrix and _v_ is some value.
 
@@ -179,43 +179,43 @@ where _a_ and _b_ are the scaling factors for the OX and OY axes respectively. O
 
 You need to develop a program to visualise 3D wireframe models:
 
-- The program must be developed in C language of C11 standard using gcc compiler. You can use any additional QT libraries and modules
-- The program code must be located in the src folder
-- The program must be built with Makefile which contains standard set of targets for GNU-programs: all, install, uninstall, clean, dvi, dist, tests, gcov. Installation directory could be arbitrary, except the building one
-- The program must be developed according to the principles of structured programming
-- When writing code it is necessary to follow the Google style
-- Prepare full coverage of modules related to model loading and affine transformations with unit-tests
-- There should be only one model on the screen at a time
+- The program must be developed in C language of C11 standard using gcc compiler. You can use any additional QT libraries and modules;
+- The program code must be located in the src folder;
+- The program must be built with Makefile which contains standard set of targets for GNU-programs: all, install, uninstall, clean, dvi, dist, tests, gcov. Installation directory could be arbitrary, except the building one;
+- The program must be developed according to the principles of structured programming;
+- When writing code it is necessary to follow the Google style;
+- Prepare full coverage of modules related to model loading and affine transformations with unit-tests;
+- There should be only one model on the screen at a time;
 - The program must provide the ability to:
-    - Load a wireframe model from an obj file (vertices and surfaces list support only).
-    - Translate the model by a given distance in relation to the X, Y, Z axes.
-    - Rotate the model by a given angle relative to its X, Y, Z axes.
-    - Scale the model by a given value.
+    - Load a wireframe model from an obj file (vertices and surfaces list support only);
+    - Translate the model by a given distance in relation to the X, Y, Z axes;
+    - Rotate the model by a given angle relative to its X, Y, Z axes;
+    - Scale the model by a given value;
 - GUI implementation, based on any GUI library with API for C89/C99/C11 <br/>
   * For Linix: GTK+, CEF, Qt<br/>
-  * For Mac: GTK+, Nuklear, raygui, microui, libagar, libui, IUP, LCUI, CEF, Qt
+  * For Mac: GTK+, Nuklear, raygui, microui, libagar, libui, IUP, LCUI, CEF, Qt;
 - The graphical user interface must contain:
-    - A button to select the model file and a field to output its name.
-    - A visualisation area for the wireframe model.
-    - Button/buttons and input fields for translating the model.
-    - Button/buttons and input fields for rotating the model.
-    - Button/buttons and input fields for scaling the model.
-    - Information about the uploaded model - file name, number of vertices and edges.
-- The program must correctly process and allow user to view models with details up to 100, 1000, 10,000, 100,000, 1,000,000  vertices without freezing (a freeze is an interface inactivity of more than 0.5 seconds)
+    - A button to select the model file and a field to output its name;
+    - A visualisation area for the wireframe model;
+    - Button/buttons and input fields for translating the model;
+    - Button/buttons and input fields for rotating the model;
+    - Button/buttons and input fields for scaling the model;
+    - Information about the uploaded model - file name, number of vertices and edges;
+- The program must correctly process and allow user to view models with details up to 100, 1000, 10,000, 100,000, 1,000,000  vertices without freezing (a freeze is an interface inactivity of more than 0.5 seconds).
 
 *Note:* **Don't upload heavy files (>10 mb) to git.**
 
 ## Part 2. Bonus. Settings
 
-- The program must allow customizing the type of projection (parallel and central)
-- The program must allow setting up the type (solid, dashed), color and thickness of the edges, display method (none, circle, square), color and size of the vertices
-- The program must allow choosing the background color
-- Settings must be saved between program restarts
+- The program must allow customizing the type of projection (parallel and central);
+- The program must allow setting up the type (solid, dashed), color and thickness of the edges, display method (none, circle, square), color and size of the vertices;
+- The program must allow choosing the background color;
+- Settings must be saved between program restarts.
 
 ## Part 3. Bonus. Record
 
-- The program must allow saving the captured (rendered) images as bmp and jpeg files.
-- The program must allow recording small screencasts by a special button - the current custom affine transformation of the loaded object into gif-animation (640x480, 10fps, 5s)
+- The program must allow saving the captured (rendered) images as bmp and jpeg files;
+- The program must allow recording small screencasts by a special button - the current custom affine transformation of the loaded object into gif-animation (640x480, 10fps, 5s).
 
 
 💡 [Tap here](https://forms.yandex.ru/cloud/641815b8e010db24ff2687a4/) **to leave your feedback on the project.** Product Team really tries to make your educational experience better.
