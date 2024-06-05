@@ -1,5 +1,5 @@
 #Main Makefile 
-.PHONY: clean
+.PHONY: clean clang-format clang-format-check
 
 git:
 	./tools/git.sh
@@ -15,5 +15,3 @@ clean: clear
 clear:
 	@find . -name "*.o" | xargs rm -rf
 	@rm -rf *.out
-
-
