@@ -1,8 +1,10 @@
 #Main Makefile 
 .PHONY: clean clang-format clang-format-check
 
+all:
+
 git:
-	./tools/git.sh
+	@./tools/git.sh
 
 clang-format-check:
 	@find . -name "*.c" -o -name "*.h" -o -name "*.cpp" | xargs clang-format -n --style=Google 
