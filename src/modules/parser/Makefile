@@ -1,4 +1,4 @@
-.PHONY: all build clear rebuild clean
+.PHONY: all build clear rebuild clean style
 
 all: build
 	@gcc -Wall -Wextra -Werror parser.c -o parser_test
@@ -15,3 +15,6 @@ clean: clear
 
 makeObjDir:
 	@mkdir obj -p
+
+style:
+	@clang-format --style=Google -i *.c *.h
