@@ -63,14 +63,6 @@ while getopts ":a:r:c:p:i:y:h:" opt; do
     esac
 done
 
-if [ $push_flag = true ]; then
-    read -p "Branch name: " branch_name
-    if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
-        echo "Pushing to $origin $branch_name"
-        git push $origin $branch_name
-    fi
-fi
-
 if [ ! -z "$add_file" ]; then
     git add "$add_file"
 fi
@@ -92,4 +84,12 @@ if [ ! -z "$commit_message" ]; then
         commit_message="$VIEWER-${yandex_message} $commit_message"
     fi
     git commit -m "$commit_message"
+fi
+
+if [ $push_flag = true ]; then
+    read -p "Branch name: " branch_name
+    if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
+        echo "Pushing to $origin $branch_name"
+        git push $origin $branch_name
+    fi
 fi
