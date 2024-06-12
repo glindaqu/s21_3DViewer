@@ -66,6 +66,7 @@ done
 if [ $push_flag = true ]; then
     read -p "Branch name: " branch_name
     if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
+        echo "Pushing to $origin $branch_name"
         git push $origin $branch_name
     fi
 fi
