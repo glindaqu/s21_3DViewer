@@ -1,13 +1,13 @@
 #!/bin/bash
 
 usage() {
-    echo "Использование: $0 [-a <файл>] [-r <файл>] [-c <сообщение>] [-p <origin> <ветка>] [-s]"
+    echo "Использование: $0 [-a <файл>] [-r <файл>] [-c <сообщение>] [-p <origin> <ветка>] [-i <сообщение>] [-y <сообщение>] [-h]"
     echo "  -a <файл>     Добавить файл в индекс Git"
     echo "  -r <файл>     Удалить файл из индекса Git"
     echo "  -c <сообщение>    Создать коммит с сообщением"
     echo "  -i <сообщение>    Создать коммит с issue"
     echo "  -y <сообщение>    Создать коммит с yandex tracker"
-    echo "  -p <origin> <ветка>    Отправить изменения в удаленный репозиторий"
+    echo "  -p <origin> Отправить изменения в удаленный репозиторий"
     echo "  -h, --help     Показать эту справку и выйти"
     exit 1
 }
@@ -20,13 +20,14 @@ issue_message=""
 yandex_message=""
 add_file=""
 rm_file=""
+push_flag=false
 issue_flag=false
 yandex_flag=false
 commit_message=""
 origin=""
 branch_name=""
 
-while getopts ":a:r:c:p:i:y:h-" opt; do
+while getopts ":a:r:c:p:i:y:h:" opt; do
     case $opt in
         a) add_file="$OPTARG" ;;
         r) rm_file="$OPTARG" ;;
@@ -61,9 +62,11 @@ while getopts ":a:r:c:p:i:y:h-" opt; do
     esac
 done
 
-if [ ! -z "$origin" ] && [ -z "$branch_name" ]; then
-    echo "Ошибка: после опции -p необходимо указать и имя удаленного репозитория, и имя ветки."
-    usage
+if [ $push_flag = true ]; then
+    read -p "Branch name: " branch_name
+    if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
+        git push $origin $branch_name
+    fi
 fi
 
 if [ ! -z "$add_file" ]; then
@@ -76,19 +79,15 @@ fi
 
 if [ ! -z "$commit_message" ]; then
     if [ "$issue_flag" = true ] && [ "$yandex_flag" = true ]; then
-        read -p "Issue num: " $issue_message
-        read -p "Yandex num: " $yandex_message
+        read -p "Issue num: " issue_message
+        read -p "Yandex num: " yandex_message
         commit_message="#[$issue_message][$yandex_message] $commit_message"
     elif [ "$issue_flag" = true ]; then
-        read -p "Issue num: " $issue_message
+        read -p "Issue num: " issue_message
         commit_message="#${issue_message} $commit_message"
     elif [ "$yandex_flag" = true ]; then
-        read -p "Yandex num: " $yandex_message
+        read -p "Yandex num: " yandex_message
         commit_message="$VIEWER-${yandex_message} $commit_message"
     fi
     git commit -m "$commit_message"
-fi
-
-if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
-    git push $origin $branch_name
 fi
