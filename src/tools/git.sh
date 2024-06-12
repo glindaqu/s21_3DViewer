@@ -66,6 +66,8 @@ if [ $push_flag = true ]; then
     read -p "Branch name: " branch_name
     if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
         git push $origin $branch_name
+    else
+        echo "Необходимо указать branch name"
     fi
 fi
 
