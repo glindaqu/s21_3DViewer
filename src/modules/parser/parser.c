@@ -6,6 +6,7 @@
 #define MAX_BUFFER_SIZE 256
 
 static void readVertex(ObjFile_t* file, char* line);
+static void readSurface(ObjFile_t* file, char* line);
 
 ParserReturnCode parse(ObjFile_t* file) {
     FILE* objFilePtr = fopen(file->fileName, "r");
@@ -15,8 +16,8 @@ ParserReturnCode parse(ObjFile_t* file) {
     char* line = NULL;
     size_t readChars = 0;
     while (getline(&line, &readChars, objFilePtr) != EOF) {
-        printf("%s", line);
         readVertex(file, line);
+        readSurface(file, line);
     }
     if (line != NULL) free(line);
     fclose(objFilePtr);
@@ -32,10 +33,19 @@ static void readVertex(ObjFile_t* file, char* line) {
     sscanf(line, "v %f %f %f", &vertex->x, &vertex->y, &vertex->z);
 }
 
-void printVertices(ObjFile_t file) {
-    for (int i = 0; i < file.verticesCount; i++) {
-        printf("%g %g %g\n", file.vertices[i]->x, file.vertices[i]->y, file.vertices[i]->z);
-    }
+static void readSurface(ObjFile_t* file, char* line) {
+    if (line[0] != 'f' || line[1] != ' ') return;
+    file->surfacesCount++;
+    file->surfaces = realloc(file->surfaces, sizeof(Surface_t) * file->surfacesCount);
+    file->surfaces[file->surfacesCount - 1] = calloc(1, sizeof(Surface_t));
+    Surface_t* surface = file->surfaces[file->surfacesCount - 1];
+    surface->verticesIndices = calloc(3, sizeof(int));
+    if (strstr(line, "//"))
+        sscanf(line, "f %d//%*f %d//%*f %d//%*f", &surface->verticesIndices[0], &surface->verticesIndices[1], &surface->verticesIndices[2]);
+    else if (strchr(line, '/'))
+        sscanf(line, "f %d/%*f/%*f %d/%*f/%*f %d/%*f/%*f", &surface->verticesIndices[0], &surface->verticesIndices[1], &surface->verticesIndices[2]);
+    else 
+        sscanf(line, "f %d %d %d", &surface->verticesIndices[0], &surface->verticesIndices[1], &surface->verticesIndices[2]);
 }
 
 void removeObjFile(ObjFile_t* file) {
@@ -43,13 +53,9 @@ void removeObjFile(ObjFile_t* file) {
         free(file->vertices[i]);
     }
     free(file->vertices);
-}
-
-int main(void) {
-    ObjFile_t file = {0};
-    file.fileName = "cube.obj";
-    parse(&file);
-    printVertices(file);
-    removeObjFile(&file);
-    return 0;
+    for (int i = 0; i < file->surfacesCount; i++) {
+        free(file->surfaces[i]->verticesIndices);
+        free(file->surfaces[i]);
+    }
+    free(file->surfaces);
 }

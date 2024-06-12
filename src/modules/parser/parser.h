@@ -1,6 +1,7 @@
 #ifndef _PARSER_H
 
 #define _PARSER_H
+#define _GNU_SOURCE
 
 /**
  * @brief Вершина с координатами x, y, z. 
@@ -13,24 +14,28 @@ typedef struct {
 } Vertex_t;
 
 /**
- * @brief Поверхность, состоящая из вершин (обыно из 3)
+ * @brief Поверхность, состоящая из вершин (обыно из 3). Хранит индексы этих вершин в массиве ObjFile.verticies
  * f - эквивалент в файле формата .obj
  */
 typedef struct {
-    Vertex_t* vertices;
+    int* verticesIndices;
 } Surface_t;
 
 typedef struct {
     char* fileName;
     Vertex_t** vertices;
-    Surface_t* surfaces;
+    Surface_t** surfaces;
     int verticesCount;
+    int surfacesCount;
 } ObjFile_t;
 
 typedef enum {
     FILE_DOES_NOT_EXISTS,
     OK
 } ParserReturnCode;
+
+void removeObjFile(ObjFile_t* file);
+ParserReturnCode parse(ObjFile_t* file);
 
 
 #endif //_PARSER_H
