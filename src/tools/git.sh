@@ -33,6 +33,7 @@ while getopts ":a:r:c:p:i:y:h:" opt; do
         r) rm_file="$OPTARG" ;;
         c) commit_message="$OPTARG" ;;
         p)
+            push_flag=true
             if [ -z "$origin" ]; then
                 origin="$OPTARG"
             else
@@ -66,8 +67,6 @@ if [ $push_flag = true ]; then
     read -p "Branch name: " branch_name
     if [ ! -z "$origin" ] && [ ! -z "$branch_name" ]; then
         git push $origin $branch_name
-    else
-        echo "Необходимо указать branch name"
     fi
 fi
 
