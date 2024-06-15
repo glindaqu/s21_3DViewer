@@ -18,3 +18,5 @@ makeObjDir:
 
 style:
 	@clang-format --style=Google -i *.c *.h
+
+test: build
