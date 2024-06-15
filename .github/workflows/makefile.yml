@@ -17,5 +17,7 @@ jobs:
     - name: Install dependencies
       run: sudo apt install gcc make -y
 
+      working-directory: src/modules/parser
+
     - name: Run check
-      run: cd ../src/modules/parser && make test
+      run: make test
