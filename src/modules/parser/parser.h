@@ -24,11 +24,13 @@ typedef struct {
  * вершин в массиве ObjFile.verticies f - эквивалент в файле формата .obj
  *
  * @param verticesIndices - массив индексов вершин из массива ObjFile.vertices
+ * @param normalsIndices - массив индексов нормалей из массива ObjFile.normals
  *
  * @author glindaqu
  */
 typedef struct {
   int* verticesIndices;
+  int* normalsIndices;
 } Surface_t;
 
 /**
@@ -38,18 +40,22 @@ typedef struct {
  * @param fileName - название файла (в том числе нужно для загрузки файла в
  * парсер)
  * @param vertices - массив вершин
+ * @param noramls - массив нормалей
  * @param surfaces - массив поверхностей
  * @param verticesCount - кол-во вершин
  * @param surfacesCount - кол-во поверхностей
+ * @param normalsCount - кол-во нормалей
  *
  * @author glindaqu
  */
 typedef struct {
   char* fileName;
   Vertex_t** vertices;
+  Vertex_t** normals;
   Surface_t** surfaces;
   int verticesCount;
   int surfacesCount;
+  int normalsCount;
 } ObjFile_t;
 
 /**
