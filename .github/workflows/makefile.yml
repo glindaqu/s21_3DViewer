@@ -14,14 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: configure
-      run: ./configure
-
     - name: Install dependencies
-      run: make
+      run: sudo apt update && sudo apt upgrade -y && sudo apt install gcc make -y
 
     - name: Run check
-      run: make check
-
-    - name: Run distcheck
-      run: make distcheck
+      run: make test
