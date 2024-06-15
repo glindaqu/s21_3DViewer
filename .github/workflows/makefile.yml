@@ -20,4 +20,4 @@ jobs:
       working-directory: src/modules/parser
 
     - name: Run check
-      run: pwd && ls && make test
+      run: cd src/modules/parser && make test
