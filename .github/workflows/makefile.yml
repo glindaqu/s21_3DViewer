@@ -2,7 +2,7 @@ name: Makefile CI
 
 on:
   push:
-    branches: [ "develop", "glinda" ]
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
