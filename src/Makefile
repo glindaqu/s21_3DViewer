@@ -1,4 +1,4 @@
-#Main Makefile 
+#Main Makefile of S21_3DViewer 
 .PHONY: clean clang-format clang-format-check
 
 CC = gcc
