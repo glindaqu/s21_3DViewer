@@ -1,6 +1,9 @@
 #clangd
 .cache
 
+#python env for compiledb
+pyenv
+
 # Prerequisites
 *.d
 
