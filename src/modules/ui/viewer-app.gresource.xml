@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/school21/gdy/_3dviewer">
+    <file preprocess="xml-stripblanks">viewer-app-window.ui</file>
+    <file preprocess="xml-stripblanks">viewer-app-menu.ui</file>
+    <!-- <file preprocess="xml-stripblanks">prefs.ui</file> -->
+  </gresource>
+</gresources>
