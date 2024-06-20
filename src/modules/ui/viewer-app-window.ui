@@ -1,8 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+    <!-- X bar -->
+    <object class="GtkAdjustment" id="x_adjustment">
+        <property name="upper">360</property>
+        <property name="step_increment">5</property>
+        <property name="page_increment">10</property>
+        <signal name="value-changed" handler="adjustment_changed" object="ViewerAppWindow" swapped="yes"/>
+    </object>
+    <!-- Y bar -->
+    <object class="GtkAdjustment" id="y_adjustment">
+        <property name="upper">360</property>
+        <property name="step_increment">5</property>
+        <property name="page_increment">10</property>
+        <signal name="value-changed" handler="adjustment_changed" object="ViewerAppWindow" swapped="yes"/>
+    </object>
+    <!-- Z bar -->
+    <object class="GtkAdjustment" id="z_adjustment">
+        <property name="upper">360</property>
+        <property name="step_increment">5</property>
+        <property name="page_increment">10</property>
+        <signal name="value-changed" handler="adjustment_changed" object="ViewerAppWindow" swapped="yes"/>
+    </object>
     <template class="ViewerAppWindow" parent="GtkApplicationWindow">
-        <property name="title" translatable="yes">3DViewer_V1.0</property>
+        <property name="title">3DViewer_V1.0</property>
         <property name="default-width">800</property>
-        <property name="default-height">600</property>
+        <property name="default-height">800</property>
+        <child>
+            <object class="GtkBox" id="main_box">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <child>
+                    <object class="GtkGLArea" id="gl_drawing_area">
+                        <signal name="realize" handler="gl_init" object="ViewerAppWindow" swapped="yes"/>
+                        <signal name="unrealize" handler="gl_fini" object="ViewerAppWindow" swapped="yes"/>
+                        <!-- <signal name="render" handler="gl_draw" object="ViewerAppWindow" swapped="yes"/> -->
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                    </object>
+                </child>
+            </object>
+        </child>
     </template>
 </interface>

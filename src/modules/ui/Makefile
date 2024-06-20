@@ -1,7 +1,7 @@
 CC ?= gcc
 PKGCONFIG = $(shell which pkg-config)
-CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4) -Wall -Wextra -pedantic -std=c11 -O3
-LIBS = $(shell $(PKGCONFIG) --libs gtk4)
+CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4 epoxy) -Wall -Wextra -pedantic -std=c11 -O3
+LIBS = $(shell $(PKGCONFIG) --libs gtk4 epoxy)
 GLIB_COMPILE_RESOURCES = $(shell $(PKGCONFIG) --variable=glib_compile_resources gio-2.0)
 
 SRC = $(wildcard *.c)

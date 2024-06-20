@@ -39,9 +39,11 @@ viewer_app_init (ViewerApp *self)
   g_object_set (app, "application-id", "school21.gdy._3dviewer", NULL);
 }
 
+
 static void
 viewer_app_startup (GApplication *app) {
-  const char *quit_accels[2] = { "<Ctrl>Q", NULL };
+  GtkBuilder *builder;
+  GMenuModel *app_menu;
 
   G_APPLICATION_CLASS (viewer_app_parent_class)->startup (app);
 
@@ -49,7 +51,10 @@ viewer_app_startup (GApplication *app) {
                                    app_entries, G_N_ELEMENTS (app_entries),
                                    app);
 
-  gtk_application_set_accels_for_action (GTK_APPLICATION(app), "app.quit", quit_accels);
+  builder = gtk_builder_new_from_resource ("/school21/gdy/_3dviewer/viewer-app-menu.ui");
+  app_menu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
+  gtk_application_set_menubar (GTK_APPLICATION (app), app_menu);
+  g_object_unref (builder);
 }
 
 static void
