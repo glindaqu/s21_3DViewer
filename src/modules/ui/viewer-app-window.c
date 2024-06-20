@@ -26,33 +26,6 @@ struct _ViewerAppWindowClass
 };
 
 G_DEFINE_TYPE (ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
-static void
-adjustment_changed (ViewerAppWindow *self,
-                    GtkAdjustment   *adj)
-{
-  double value = gtk_adjustment_get_value (adj);
-
-  /* update the rotation angles */
-  if (adj == self->x_adjustment)
-    self->rotation_angles[X_AXIS] = value;
-
-  if (adj == self->y_adjustment)
-    self->rotation_angles[Y_AXIS] = value;
-
-  if (adj == self->z_adjustment)
-    self->rotation_angles[Z_AXIS] = value;
-
-  /* recompute the mvp matrix */
-//   compute_mvp (self->mvp,
-//                self->rotation_angles[X_AXIS],
-//                self->rotation_angles[Y_AXIS],
-//                self->rotation_angles[Z_AXIS]);
-
-  /* queue a redraw on the GtkGLArea to ensure its contents
-   * get redrawn in the next frame
-   */
-//   gtk_widget_queue_draw (self->gl_drawing_area);
-}
 
 static void
 gl_init (ViewerAppWindow *self)
@@ -113,7 +86,7 @@ viewer_app_window_class_init (ViewerAppWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ViewerAppWindow, y_adjustment);
   gtk_widget_class_bind_template_child (widget_class, ViewerAppWindow, z_adjustment);
 
-  gtk_widget_class_bind_template_callback (widget_class, adjustment_changed);
+//   gtk_widget_class_bind_template_callback (widget_class, adjustment_changed);
   gtk_widget_class_bind_template_callback (widget_class, gl_init);
   gtk_widget_class_bind_template_callback (widget_class, gl_fini);
 
