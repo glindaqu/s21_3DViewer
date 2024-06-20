@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-<interface>
+    <template class="ViewerAppWindow" parent="GtkApplicationWindow">
+        <property name="title" translatable="yes">3DViewer_V1.0</property>
+        <property name="default-width">800</property>
+        <property name="default-height">600</property>
+    </template>
+</interface>

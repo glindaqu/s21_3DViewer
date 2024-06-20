@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=3D Viewer
+Exec=main
+Icon=school21.gdy._3dviewer
+Terminal=false
+Type=Application
+StartupNotify=true

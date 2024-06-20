@@ -59,10 +59,10 @@ viewer_app_activate (GApplication *app)
     
     if (self->window == NULL) {
         printf("self->window = viewer_app_window_new (app);\n");
-        // self->window = viewer_app_window_new (VIEWER_APP(app));
+        self->window = viewer_app_window_new (VIEWER_APP(app));
     }
 
-    // gtk_window_present(GTK_WINDOW(self->window));
+    gtk_window_present(GTK_WINDOW(self->window));
 }
 
 static void

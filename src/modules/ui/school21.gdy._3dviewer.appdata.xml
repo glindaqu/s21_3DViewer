@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>school21.gdy._3dviewer.desktop</id>
+  <!-- <metadata_license>CC0-1.0</metadata_license>
+  <project_license>CC0-1.0</project_license> -->
+  <name>21 School 3DViewer_V1.0</name>
+  <summary>Represent 3D objects</summary>
+  <description>
+    <p>
+    </p>
+  </description>
+  <url type="homepage">https://github.com/glindaqu/s21_3DViewer</url>
+  <!-- <screenshots>
+    <screenshot type="default">
+      <image>https://github.com/ebassi/glarea-example/raw/master/io.bassi.Glarea.png</image>
+    </screenshot>
+  </screenshots> -->
+  <!-- <update_contact>ebassi@gmail.com</update_contact> -->
+  <kudos>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+</component>
+
