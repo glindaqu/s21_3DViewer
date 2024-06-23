@@ -3,5 +3,7 @@
   <gresource prefix="/src/modules/ui/school21/gdy/_3dviewer">
     <file preprocess="xml-stripblanks">viewer-app-window.ui</file>
     <file preprocess="xml-stripblanks">viewer-app-menu.ui</file>
+      <file>glarea-fragment.glsl</file>
+    <file>glarea-vertex.glsl</file>
   </gresource>
 </gresources>

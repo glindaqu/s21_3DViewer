@@ -4,7 +4,7 @@ CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4 epoxy) -Wall -Wextra -pedantic -std=
 LIBS = $(shell $(PKGCONFIG) --libs gtk4 epoxy)
 GLIB_COMPILE_RESOURCES = $(shell $(PKGCONFIG) --variable=glib_compile_resources gio-2.0)
 
-SRC = $(wildcard *.c)
+SRC = viewer-app.c viewer-app-window.c viewer-error.c
 BUILT_SRC = resources.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)
@@ -21,4 +21,3 @@ clean:
 	rm -f $(BUILT_SRC)
 	rm -f $(OBJS)
 	rm -f resources.c
-
