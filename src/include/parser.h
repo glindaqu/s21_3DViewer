@@ -40,7 +40,7 @@ typedef struct {
  * @param fileName - название файла (в том числе нужно для загрузки файла в
  * парсер)
  * @param vertices - массив вершин
- * @param noramls - массив нормалей
+ * @param normals - массив нормалей
  * @param surfaces - массив поверхностей
  * @param verticesCount - кол-во вершин
  * @param surfacesCount - кол-во поверхностей
