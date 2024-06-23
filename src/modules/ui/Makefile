@@ -8,20 +8,17 @@ SRC = $(wildcard *.c)
 BUILT_SRC = resources.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)
-OBJS = $(SRC:.c=.o)
 
-all: main
+all: $(OBJS)
 
-resources.c: viewer-app.gresource.xml viewer-app-window.ui
+resources.c: viewer-app.gresource.xml viewer-app-window.ui viewer-app-menu.ui
 	$(GLIB_COMPILE_RESOURCES) viewer-app.gresource.xml --target=$@ --sourcedir=. --generate-source
 
 %.o: %.c
 	$(CC) -c -o $(@F) $(CFLAGS) $<
 
-main: $(OBJS)
-	$(CC) -o $(@F) $(OBJS) $(LIBS)
-
 clean:
 	rm -f $(BUILT_SRC)
 	rm -f $(OBJS)
-	rm -f main
+	rm -f resources.c
+

@@ -5,11 +5,10 @@
 
 G_BEGIN_DECLS
 
-#define VIEWER_APP_TYPE (viewer_app_get_type ())
+#define VIEWER_APP_TYPE (viewer_app_get_type())
 G_DECLARE_FINAL_TYPE(ViewerApp, viewer_app, VIEWER, APP, GtkApplication)
-GtkApplication *viewer_app_new (void);
+GtkApplication *viewer_app_new(void);
 
 G_END_DECLS
 
-
-#endif // _3DVIEWER_APP_H
+#endif  // _3DVIEWER_APP_H
