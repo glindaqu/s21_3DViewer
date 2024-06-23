@@ -5,12 +5,12 @@ GCC_FLAGS = -Wall -Werror -Wextra
 GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4)
 UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-app-window.o
 
-all: build
+all: build clang-format
 
 build:
 	@$(MAKE) -C modules/parser
 	@$(MAKE) -C modules/ui
-	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o 3DViewer.out 
+	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o 3DViewer.out -lparser
 
 clang-format-check:
 	@find . -name "*.c" -o -name "*.h" -o -name "*.cpp" | xargs clang-format -n --style=Google 

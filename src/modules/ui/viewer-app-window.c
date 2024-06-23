@@ -2,6 +2,7 @@
 
 #include <epoxy/gl.h>
 
+#include "../../include/parser.h"
 #include "viewer-app.h"
 
 enum { X_AXIS, Y_AXIS, Z_AXIS, N_AXES };
@@ -17,6 +18,9 @@ struct _ViewerAppWindow {
 
   GtkWidget *primary_menu;
   GtkButton *open_button;
+
+  // ObjFile_t obj_file;
+  ObjFile_t obj_file;
   // Rotations angles
   double rotation_angles[N_AXES];
 
@@ -48,9 +52,6 @@ static void open_file_complete(GObject *source_object, GAsyncResult *result,
 
   g_autoptr(GError) error = NULL;
 
-  // Complete the asynchronous operation; this function will either
-  // give you the contents of the file as a byte array, or will
-  // set the error argument
   g_file_load_contents_finish(file, result, &contents, &length, NULL, &error);
 
   if (error != NULL) {
@@ -58,11 +59,14 @@ static void open_file_complete(GObject *source_object, GAsyncResult *result,
                error->message);
     return;
   }
-  if (!g_utf8_validate(contents, length, NULL)) {
-    g_printerr(
-        "Unable to load the contents of “%s”: "
-        "the file is not encoded with UTF-8\n",
-        g_file_peek_path(file));
+
+  if (contents == NULL) {
+    g_printerr("File “%s” was empty\n", g_file_peek_path(file));
+    return;
+  }
+  self->obj_file.fileName = g_file_peek_path(file);
+  if (parse(&self->obj_file) == FILE_DOES_NOT_EXISTS) {
+    g_printerr("Unable to parse “%s”\n", g_file_peek_path(file));
     return;
   }
 }
@@ -75,7 +79,7 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
 static void on_open_response(GObject *source, GAsyncResult *result,
                              gpointer user_data) {
   GtkFileDialog *dialog = GTK_FILE_DIALOG(source);
-  ViewerApp *self = user_data;
+  ViewerAppWindow *self = user_data;
 
   g_autoptr(GFile) file = gtk_file_dialog_open_finish(dialog, result, NULL);
 
@@ -142,7 +146,8 @@ static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
                                        header_bar);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
                                        open_button);
-  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow, primary_menu);                                     
+  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
+                                       primary_menu);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
                                        gl_drawing_area);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
@@ -161,14 +166,15 @@ static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
 static void viewer_app_window_init(ViewerAppWindow *self) {
   GtkBuilder *builder;
   GMenuModel *menu;
-  GAction *action;
+  // GAction *action;
 
   gtk_widget_init_template(GTK_WIDGET(self));
-  
-  builder = gtk_builder_new_from_resource ("/src/modules/ui/school21/gdy/_3dviewer/viewer-app-menu.ui");
-  menu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
-  gtk_menu_button_set_menu_model (GTK_MENU_BUTTON (self->primary_menu), menu);
-  g_object_unref (builder);
+
+  builder = gtk_builder_new_from_resource(
+      "/src/modules/ui/school21/gdy/_3dviewer/viewer-app-menu.ui");
+  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "appmenu"));
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(self->primary_menu), menu);
+  g_object_unref(builder);
 
   g_autoptr(GSimpleAction) open_action = g_simple_action_new("open", NULL);
   g_signal_connect(open_action, "activate",
@@ -183,13 +189,13 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
 // static void
 // viewer_app_window_dispose (GObject *object)
 // {
-  // ViewerAppWindow *win;
+// ViewerAppWindow *win;
 
-  // win = VIEWER_APP_WINDOW (object);
-// 
-  // g_clear_object (&win->settings);
+// win = VIEWER_APP_WINDOW (object);
+//
+// g_clear_object (&win->settings);
 
-  // G_OBJECT_CLASS (vie)->dispose (object);
+// G_OBJECT_CLASS (vie)->dispose (object);
 // }
 
 GtkWidget *viewer_app_window_new(ViewerApp *app) {

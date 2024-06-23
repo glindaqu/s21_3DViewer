@@ -16,6 +16,37 @@ struct _ViewerAppClass {
 
 G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 
+// static void
+// preferences_activated (GSimpleAction *action,
+//                        GVariant      *parameter,
+//                        gpointer       app)
+// {
+//   ViewerApp *prefs;
+//   GtkWindow *win;
+
+//   win = gtk_application_get_active_window (GTK_APPLICATION (app));
+//   prefs = example_app_prefs_new (EXAMPLE_APP_WINDOW (win));
+//   gtk_window_present (GTK_WINDOW (prefs));
+// }
+static void quit_activated(GSimpleAction *action, GVariant *parameter,
+                           gpointer app) {
+  const gchar *action_name = g_action_get_name(G_ACTION(action));
+  g_print("Action name: %s\n", action_name);
+
+  if (parameter != NULL) {
+    const gchar *param_str = g_variant_get_string(parameter, NULL);
+    g_print("Parameter value: %s\n", param_str);
+  } else {
+    g_print("No parameter provided\n");
+  }
+
+  g_application_quit(G_APPLICATION(app));
+}
+
+static GActionEntry app_entries[] = {
+    // { "preferences", preferences_activated, NULL, NULL, NULL, {0} },
+    {"quit", quit_activated, NULL, NULL, NULL, {0}}};
+
 static void viewer_app_init(ViewerApp *self) {
   GApplication *app = G_APPLICATION(self);
   self->window = NULL;
@@ -23,7 +54,17 @@ static void viewer_app_init(ViewerApp *self) {
 }
 
 static void viewer_app_startup(GApplication *app) {
+  const char *quit_accels[2] = {"<Ctrl>Q", NULL};
+  const char *open_accels[2] = {"<Ctrl>O", NULL};
+
   G_APPLICATION_CLASS(viewer_app_parent_class)->startup(app);
+
+  g_action_map_add_action_entries(G_ACTION_MAP(app), app_entries,
+                                  G_N_ELEMENTS(app_entries), app);
+  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "app.quit",
+                                        quit_accels);
+  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "win.open",
+                                        open_accels);
 }
 
 static void viewer_app_activate(GApplication *app) {

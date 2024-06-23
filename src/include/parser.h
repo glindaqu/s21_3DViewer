@@ -49,7 +49,7 @@ typedef struct {
  * @author glindaqu
  */
 typedef struct {
-  char* fileName;
+  const char* fileName;
   Vertex_t** vertices;
   Vertex_t** normals;
   Surface_t** surfaces;
