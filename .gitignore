@@ -1,3 +1,6 @@
+#gtk
+resources.c
+
 #clangd
 .cache
 
