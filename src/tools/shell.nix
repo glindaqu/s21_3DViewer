@@ -12,6 +12,7 @@ stdenv.mkDerivation {
     glib
     glibc
     libepoxy
+    valgrind
     python3
   ];
 }

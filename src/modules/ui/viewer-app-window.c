@@ -412,7 +412,7 @@ static void open_file_complete(GObject *source_object, GAsyncResult *result,
     return;
   }
   self->obj_file.fileName = g_file_peek_path(file);
-  if (parse(&self->obj_file) == FILE_DOES_NOT_EXISTS) {
+  if (parse(&self->obj_file) != OK) {
     g_printerr("Unable to parse “%s”\n", g_file_peek_path(file));
     return;
   }
