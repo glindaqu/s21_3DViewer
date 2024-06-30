@@ -78,7 +78,7 @@ static void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->program);
   glUniformMatrix4fv(self->mvp_location, 1, GL_FALSE, self->mvp_matrix->mvp);
   glBindVertexArray(self->vao);
-  glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 6,
+  glDrawElements(GL_LINE_LOOP, self->obj_file->surfacesCount * 6,
                  GL_UNSIGNED_INT, 0);
 
   glBindVertexArray(0);

@@ -92,7 +92,7 @@ void removeObjFile(ObjFile_t* file) {
   free(file->vertices);
   for (int i = 0; i < file->surfacesCount; i++) {
     free(file->surfaces[i]->verticesIndices);
-    // free(file->surfaces[i]->normalsIndices);
+    free(file->surfaces[i]->normalsIndices);
     free(file->surfaces[i]);
   }
   free(file->surfaces);
