@@ -14,9 +14,7 @@
  * @author glindaqu
  */
 typedef struct {
-  float x;
-  float y;
-  float z;
+  float x, y, z;
 } Vertex_t;
 
 /**
@@ -29,8 +27,8 @@ typedef struct {
  * @author glindaqu
  */
 typedef struct {
-  int* verticesIndices;
-  int* normalsIndices;
+  unsigned int* verticesIndices;
+  // int* normalsIndices;
 } Surface_t;
 
 /**
@@ -58,6 +56,14 @@ typedef struct {
   int normalsCount;
 } ObjFile_t;
 
+/**
+ * @brief Инициализация структуры ObjFile_t
+ *
+ * @param file - указатель на переменную типа ObjFile_t
+ *
+ * @author yukikoqo
+ */
+void initParser(ObjFile_t* file);
 /**
  * @brief Перечисление кодов-состояний, которые может вернуть парсер
  *
