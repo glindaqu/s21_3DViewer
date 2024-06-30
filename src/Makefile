@@ -11,7 +11,8 @@ all: build clang-format
 build:
 	@$(MAKE) -C modules/parser
 	@$(MAKE) -C modules/ui
-	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o 3DViewer.out -lparser -lepoxy -lm
+	@$(MAKE) -C modules/matrix_calc
+	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o 3DViewer.out -lparser -lepoxy -lm -lmatrix_calc
 
 test-parser:
 	@$(MAKE) -C modules/parser
@@ -31,5 +32,6 @@ clear:
 	@echo "Cleaning..."
 	$(MAKE) -C modules/parser clean
 	$(MAKE) -C modules/ui clean
+	$(MAKE) -C modules/matrix_calc clean
 	@find . -name "*.o" -o -name "*.a" -o -name "*.out" | xargs rm -rf
 	@rm -rf *.out

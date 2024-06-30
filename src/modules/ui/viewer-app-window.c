@@ -2,6 +2,7 @@
 
 #include <epoxy/gl.h>
 
+#include "../../include/matrix_calc.h"
 #include "../../include/parser.h"
 #include "viewer-glfuncs.h"
 
@@ -19,6 +20,8 @@ struct _ViewerAppWindow {
 
   // ObjFile_t obj_file;
   ObjFile_t *obj_file;
+
+  gl_matrix mvp_matrix;
 
   GtkWidget *gl_drawing_area;
 
@@ -74,7 +77,6 @@ static void gl_fini(ViewerAppWindow *self) {
 static void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->program);
   glBindVertexArray(self->vao);
-
   glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 3,
                  GL_UNSIGNED_INT, 0);
 }

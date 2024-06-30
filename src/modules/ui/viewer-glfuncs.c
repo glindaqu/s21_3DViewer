@@ -4,20 +4,12 @@ void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index,
                   guint *vao_out) {
   guint vao, vbo, ebo;
 
-  // objFile->fileName = "./tests/parser/box.obj";
-
-  // if (parse(objFile) != OK) {
-  //   g_print("Parse error\n");
-  //   return;
-  // }
-
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
   glGenBuffers(1, &ebo);
 
   glBindVertexArray(vao);
 
-  // Create vertex data
   Vertex_t *vertices = calloc(objFile->verticesCount, sizeof(Vertex_t));
   for (int i = 0; i < objFile->verticesCount; i++) {
     vertices[i] = *(objFile->vertices[i]);
