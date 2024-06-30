@@ -28,7 +28,7 @@ typedef struct {
  */
 typedef struct {
   unsigned int* verticesIndices;
-  // int* normalsIndices;
+  unsigned int* normalsIndices;
 } Surface_t;
 
 /**

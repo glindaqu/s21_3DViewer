@@ -65,25 +65,23 @@ static void readSurface(ObjFile_t* file, char* line) {
   file->surfaces[file->surfacesCount - 1] = calloc(1, sizeof(Surface_t));
   Surface_t* surface = file->surfaces[file->surfacesCount - 1];
   surface->verticesIndices = calloc(3, sizeof(int));
-  // surface->normalsIndices = calloc(3, sizeof(int));
+  surface->normalsIndices = calloc(3, sizeof(int));
   if (strstr(line, "//"))
-    sscanf(line, "f %d//%*d %d//%*d %d//%*d", &surface->verticesIndices[0],
-           &surface->verticesIndices[1], &surface->verticesIndices[2]);
-  // sscanf(line, "f %d//%d %d//%d %d//%d", &surface->verticesIndices[0],
-  //        &surface->normalsIndices[0], &surface->verticesIndices[1],
-  //        &surface->normalsIndices[1], &surface->verticesIndices[2],
-  //        &surface->normalsIndices[2]);
-  // else if (strchr(line, '/'))
-  //   sscanf(line, "f %d/%*d/%d %d/%*d/%d %d/%*d/%d",
-  //          &surface->verticesIndices[0], &surface->normalsIndices[0],
-  //          &surface->verticesIndices[1], &surface->normalsIndices[1],
-  //          &surface->verticesIndices[2], &surface->normalsIndices[2]);
+    sscanf(line, "f %d//%d %d//%d %d//%d", &surface->verticesIndices[0],
+           &surface->normalsIndices[0], &surface->verticesIndices[1],
+           &surface->normalsIndices[1], &surface->verticesIndices[2],
+           &surface->normalsIndices[2]);
+  else if (strchr(line, '/'))
+    sscanf(line, "f %d/%*d/%d %d/%*d/%d %d/%*d/%d",
+           &surface->verticesIndices[0], &surface->normalsIndices[0],
+           &surface->verticesIndices[1], &surface->normalsIndices[1],
+           &surface->verticesIndices[2], &surface->normalsIndices[2]);
   else
     sscanf(line, "f %d %d %d", &surface->verticesIndices[0],
            &surface->verticesIndices[1], &surface->verticesIndices[2]);
   for (int i = 0; i < 3; i++) {
     surface->verticesIndices[i]--;
-    // surface->normalsIndices[i]--;
+    surface->normalsIndices[i]--;
   }
 }
 

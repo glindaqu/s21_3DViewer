@@ -6,14 +6,14 @@
 #include "../../include/parser.h"
 #include "viewer-glfuncs.h"
 
+enum { X_AXIS, Y_AXIS, Z_AXIS, N_AXES };
+
 struct _ViewerAppWindow {
   GtkApplicationWindow parent_instance;
 
   GtkHeaderBar *header_bar;
 
-  GtkAdjustment *x_adjustment;
-  GtkAdjustment *y_adjustment;
-  GtkAdjustment *z_adjustment;
+  double rotation_angles[N_AXES];
 
   GtkWidget *primary_menu;
   GtkButton *open_button;
@@ -21,7 +21,7 @@ struct _ViewerAppWindow {
   // ObjFile_t obj_file;
   ObjFile_t *obj_file;
 
-  gl_matrix mvp_matrix;
+  gl_matrix *mvp_matrix;
 
   GtkWidget *gl_drawing_area;
 
@@ -76,9 +76,13 @@ static void gl_fini(ViewerAppWindow *self) {
 
 static void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->program);
+  glUniformMatrix4fv(self->mvp_location, 1, GL_FALSE, self->mvp_matrix->mvp);
   glBindVertexArray(self->vao);
-  glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 3,
+  glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 6,
                  GL_UNSIGNED_INT, 0);
+
+  glBindVertexArray(0);
+  glUseProgram(0);
 }
 
 static gboolean gl_draw(ViewerAppWindow *self) {
@@ -107,7 +111,10 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
     glDeleteVertexArrays(1, &self->vao);
     self->vao = 0;
   }
+
   gl_init(self);
+  init_mvp_matrix(self->mvp_matrix);
+
   gtk_widget_queue_draw(self->gl_drawing_area);
 }
 
@@ -129,6 +136,54 @@ static void viewer_app_window__open_file_dialog(GAction *action,
   gtk_file_dialog_open(dialog, GTK_WINDOW(self), NULL, on_open_response, self);
 }
 
+static void rotate_x_plus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[X_AXIS] += 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
+static void rotate_x_minus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[X_AXIS] -= 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
+static void rotate_y_plus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[Y_AXIS] += 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
+static void rotate_y_minus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[Y_AXIS] -= 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
+static void rotate_z_plus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[Z_AXIS] += 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
+static void rotate_z_minus_clicked(ViewerAppWindow *self) {
+  self->rotation_angles[Z_AXIS] -= 5.0;
+  rotate_mvp_matrix(self->mvp_matrix, self->rotation_angles[X_AXIS],
+                    self->rotation_angles[Y_AXIS],
+                    self->rotation_angles[Z_AXIS]);
+  gtk_widget_queue_draw(self->gl_drawing_area);
+}
+
 static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
 
@@ -144,13 +199,13 @@ static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
                                        primary_menu);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
                                        gl_drawing_area);
-  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
-                                       x_adjustment);
-  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
-                                       y_adjustment);
-  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
-                                       z_adjustment);
 
+  gtk_widget_class_bind_template_callback(widget_class, rotate_x_plus_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, rotate_x_minus_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, rotate_y_plus_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, rotate_y_minus_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, rotate_z_plus_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, rotate_z_minus_clicked);
   gtk_widget_class_bind_template_callback(widget_class, gl_init);
   gtk_widget_class_bind_template_callback(widget_class, gl_draw);
   gtk_widget_class_bind_template_callback(widget_class, gl_fini);
@@ -161,7 +216,10 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   GMenuModel *menu;
 
   self->obj_file = calloc(1, sizeof(ObjFile_t));
+  self->mvp_matrix = calloc(1, sizeof(gl_matrix));
   initParser(self->obj_file);
+
+  init_mvp_matrix(self->mvp_matrix);
 
   gtk_widget_init_template(GTK_WIDGET(self));
 
@@ -184,7 +242,10 @@ static void viewer_app_window_dispose(GObject *object) {
 
   win = VIEWER_APP_WINDOW(object);
   removeObjFile(win->obj_file);
+  free(win->mvp_matrix);
+
   g_clear_object(&win->obj_file);
+  g_clear_object(&win->mvp_matrix);
 
   G_OBJECT_CLASS(win)->dispose(object);
 }

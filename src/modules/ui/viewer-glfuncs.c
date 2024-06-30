@@ -41,7 +41,7 @@ void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index,
   // Prepare index data
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               objFile->surfacesCount * 3 * sizeof(unsigned int), indices,
+               objFile->surfacesCount * 3 * sizeof(GLuint), indices,
                GL_STATIC_DRAW);
 
   // Set up vertex attribute pointers
@@ -143,7 +143,7 @@ gboolean init_shaders(guint *program_out, guint *mvp_location_out,
     goto out;
   }
 
-  // mvp_location = glGetUniformLocation(program, "mvp");
+  mvp_location = glGetUniformLocation(program, "mvp_matrix");
 
   // position_location = glGetAttribLocation(program, "position");
   // color_location = glGetAttribLocation(program, "color");
