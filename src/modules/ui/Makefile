@@ -12,12 +12,12 @@ OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)
 all: $(OBJS)
 
 resources.c: viewer-app.gresource.xml viewer-app-window.ui viewer-app-menu.ui
-	$(GLIB_COMPILE_RESOURCES) viewer-app.gresource.xml --target=$@ --sourcedir=. --generate-source
+	@$(GLIB_COMPILE_RESOURCES) viewer-app.gresource.xml --target=$@ --sourcedir=. --generate-source
 
 %.o: %.c
-	$(CC) -c -o $(@F) $(CFLAGS) $<
+	@$(CC) -c -o $(@F) $(CFLAGS) $<
 
 clean:
-	rm -f $(BUILT_SRC)
-	rm -f $(OBJS)
-	rm -f resources.c
+	@rm -f $(BUILT_SRC)
+	@rm -f $(OBJS)
+	@rm -f resources.c
