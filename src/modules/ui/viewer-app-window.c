@@ -188,22 +188,6 @@ static void gl_motion_notify_event(GtkEventControllerMotion *controller,
   }
 }
 
-static void key_pressed_event(GtkEventControllerKey *controller, guint keyval,
-                              guint keycode, GdkModifierType state,
-                              ViewerAppWindow *self) {
-  if (keyval == GDK_KEY_Alt_L || keyval == GDK_KEY_Alt_R) {
-    self->alt_key = TRUE;
-  }
-}
-
-static void key_released_event(GtkEventControllerKey *controller, guint keyval,
-                               guint keycode, GdkModifierType state,
-                               ViewerAppWindow *self) {
-  if (keyval == GDK_KEY_Alt_L || keyval == GDK_KEY_Alt_R) {
-    self->alt_key = FALSE;
-  }
-}
-
 static void gl_scroll_event(GtkEventControllerScroll *controller, double dx,
                             double dy, ViewerAppWindow *self) {
   GdkModifierType state = gtk_event_controller_get_current_event_state(
