@@ -23,9 +23,17 @@
         </child>
         <child>
             <object class="GtkBox" id="main_box">
+                <property name="name">main_box</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">6</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel" id="model_name_label">
+                        <property name="label">Model Name</property>
+                        <property name="name">model_label</property>
+                        <property name="xalign">0</property>
+                    </object>
+                </child>
                 <child>
                     <object class="GtkGLArea" id="gl_drawing_area">
                         <signal name="realize" handler="gl_init" object="ViewerAppWindow" swapped="yes"/>

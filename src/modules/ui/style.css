@@ -17,6 +17,17 @@ label {
     font-size: 16px;
 }
 
+#main_box {
+    padding: 10px;
+}
+
+#model_label {
+
+    letter-spacing: 4px;
+    font-weight: bold;
+    font-style: italic;
+}
+
 scale {
     background-color: #4a90d9;
 }

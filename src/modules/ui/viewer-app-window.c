@@ -22,7 +22,8 @@ struct _ViewerAppWindow {
 
   GtkWidget *gl_drawing_area;
 
-  GtkBox *control_box;
+  GtkLabel *model_name_label;
+
   GtkScale *x_scale;
   GtkScale *y_scale;
   GtkScale *z_scale;
@@ -136,6 +137,13 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
   gtk_range_set_value(GTK_RANGE(self->y_scale), 0);
   gtk_range_set_value(GTK_RANGE(self->z_scale), 0);
 
+  gtk_label_set_text(
+      GTK_LABEL(self->model_name_label),
+      g_strdup_printf("Model: %s, Vertices: %d, Surfaces: %d",
+                      g_path_get_basename(self->obj_file->fileName),
+                      self->obj_file->verticesCount,
+                      self->obj_file->surfacesCount));
+
   gtk_widget_queue_draw(self->gl_drawing_area);
 }
 
@@ -198,10 +206,24 @@ static void gl_scroll_event(GtkEventControllerScroll *controller, double dx,
   GdkModifierType state = gtk_event_controller_get_current_event_state(
       GTK_EVENT_CONTROLLER(controller));
   if (state & GDK_SHIFT_MASK) {
-    self->matrix_movement.scale_vector[X_AXIS] += dx;
+    self->matrix_movement.scale_vector[X_AXIS] += dy;
     self->matrix_movement.scale_vector[Y_AXIS] += dy;
+    self->matrix_movement.scale_vector[Z_AXIS] += dy;
+
+    if (self->matrix_movement.scale_vector[X_AXIS] < 0.1) {
+      self->matrix_movement.scale_vector[X_AXIS] = 0.1;
+    }
+    if (self->matrix_movement.scale_vector[Y_AXIS] < 0.1) {
+      self->matrix_movement.scale_vector[Y_AXIS] = 0.1;
+    }
+    if (self->matrix_movement.scale_vector[Z_AXIS] < 0.1) {
+      self->matrix_movement.scale_vector[Z_AXIS] = 0.1;
+    }
+
     move_mvp_matrix(self->mvp_matrix, &self->matrix_movement);
+
     gtk_widget_queue_draw(self->gl_drawing_area);
+
   } else if (state & GDK_ALT_MASK) {
     self->matrix_movement.rotation_angles[Z_AXIS] += (dx + dy) * 5.0;
 
@@ -243,6 +265,9 @@ static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow, x_scale);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow, y_scale);
   gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow, z_scale);
+  gtk_widget_class_bind_template_child(widget_class, ViewerAppWindow,
+                                       model_name_label);
+
   gtk_widget_class_bind_template_callback(widget_class, gl_init);
   gtk_widget_class_bind_template_callback(widget_class, gl_draw);
   gtk_widget_class_bind_template_callback(widget_class, gl_fini);
@@ -255,6 +280,10 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   init_mvp_matrix(self->mvp_matrix);
 
   memset(&self->matrix_movement, 0, sizeof(mvp_matrix_movement_t));
+
+  self->matrix_movement.scale_vector[X_AXIS] = 1.0;
+  self->matrix_movement.scale_vector[Y_AXIS] = 1.0;
+  self->matrix_movement.scale_vector[Z_AXIS] = 1.0;
 
   gtk_widget_init_template(GTK_WIDGET(self));
 
