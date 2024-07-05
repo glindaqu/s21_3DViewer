@@ -1,18 +1,24 @@
 .PHONY: all build clean clang-format clang-format-check clear
 
 CC = gcc
-GCC_FLAGS = -Wall -Werror -Wextra -g
+GCC_FLAGS = -Wall -Werror -Wextra -Wno-unused-function -g
 CHECK_FLAGS = $(shell pkg-config --cflags check) $(shell pkg-config --libs check)
 GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4)
 UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-app-window.o modules/ui/viewer-error.o modules/ui/viewer-glfuncs.o
 
 all: build clang-format
 
-build:
-	@$(MAKE) -C modules/parser
-	@$(MAKE) -C modules/ui
-	@$(MAKE) -C modules/matrix_calc
+build: build-parser build-ui build-matrix_calc
 	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o 3DViewer.out -lparser -lepoxy -lm -lmatrix_calc
+
+build-parser:
+	@$(MAKE) -C modules/parser
+
+build-ui:
+	@$(MAKE) -C modules/ui
+
+build-matrix_calc:
+	@$(MAKE) -C modules/matrix_calc
 
 test-parser:
 	@$(MAKE) -C modules/parser

@@ -7,6 +7,8 @@ all: build $(LIB)
 build: makeObjDir
 	@gcc -Wall -Wextra -Werror -std=c11 -g -c parser.c -o obj/parser.o
 
+obj/parser.o: parser.c
+
 $(LIB): obj/parser.o
 	@ar rcs $(LIB) obj/parser.o
 

@@ -1,6 +1,6 @@
 CC ?= gcc
 PKGCONFIG = $(shell which pkg-config)
-CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4 epoxy) -Wall -Wextra -pedantic -std=c11 -O3 -g
+CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4 epoxy) -Wno-unused-function -Wall -Wextra -pedantic -std=c11 -O3 -g
 LIBS = $(shell $(PKGCONFIG) --libs gtk4 epoxy)
 GLIB_COMPILE_RESOURCES = $(shell $(PKGCONFIG) --variable=glib_compile_resources gio-2.0)
 
