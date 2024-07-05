@@ -36,8 +36,8 @@ clean: clear
 
 clear:
 	@echo "Cleaning..."
-	$(MAKE) -C modules/parser clean
-	$(MAKE) -C modules/ui clean
-	$(MAKE) -C modules/matrix_calc clean
+	@$(MAKE) -C modules/parser clean
+	@$(MAKE) -C modules/ui clean
+	@$(MAKE) -C modules/matrix_calc clean
 	@find . -name "*.o" -o -name "*.a" -o -name "*.out" | xargs rm -rf
 	@rm -rf *.out

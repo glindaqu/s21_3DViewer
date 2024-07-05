@@ -10,20 +10,15 @@
 static void readVertex(ObjFile_t* file, char* line);
 static void readNormal(ObjFile_t* file, char* line);
 static void readSurface(ObjFile_t* file, char* line);
-
-void initParser(ObjFile_t* file) {
-  file->verticesCount = 0;
-  file->normalsCount = 0;
-  file->surfacesCount = 0;
-  file->vertices = NULL;
-  file->normals = NULL;
-  file->surfaces = NULL;
-}
+static void initParser(ObjFile_t* file);
+static int checkFileFormat(ObjFile_t* file);
 
 ParserReturnCode parse(ObjFile_t* file) {
   FILE* objFilePtr = fopen(file->fileName, "r");
   if (objFilePtr == NULL) {
     return FILE_DOES_NOT_EXISTS;
+  } else if (checkFileFormat(file) == -1) {
+    return INVALID_FILE_FORMAT;
   }
   setlocale(LC_NUMERIC, "C");
   char* line = NULL;
@@ -35,7 +30,40 @@ ParserReturnCode parse(ObjFile_t* file) {
   }
   if (line != NULL) free(line);
   fclose(objFilePtr);
-  return OK;
+  return file->surfacesCount && file->verticesCount
+             ? OK
+             : FILE_CONTAINS_UNEXPECTED_CONTENT;
+}
+
+void removeObjFile(ObjFile_t* file) {
+  for (int i = 0; i < file->verticesCount; i++) {
+    free(file->vertices[i]);
+  }
+  free(file->vertices);
+  for (int i = 0; i < file->surfacesCount; i++) {
+    free(file->surfaces[i]->verticesIndices);
+    free(file->surfaces[i]->normalsIndices);
+    free(file->surfaces[i]);
+  }
+  free(file->surfaces);
+  for (int i = 0; i < file->normalsCount; i++) {
+    free(file->normals[i]);
+  }
+  free(file->normals);
+}
+
+static int checkFileFormat(ObjFile_t* file) {
+  if (strstr(file->fileName, ".obj")) return -1;
+  return 1;
+}
+
+static void initParser(ObjFile_t* file) {
+  file->verticesCount = 0;
+  file->normalsCount = 0;
+  file->surfacesCount = 0;
+  file->vertices = NULL;
+  file->normals = NULL;
+  file->surfaces = NULL;
 }
 
 static void readVertex(ObjFile_t* file, char* line) {
@@ -83,21 +111,4 @@ static void readSurface(ObjFile_t* file, char* line) {
     surface->verticesIndices[i]--;
     surface->normalsIndices[i]--;
   }
-}
-
-void removeObjFile(ObjFile_t* file) {
-  for (int i = 0; i < file->verticesCount; i++) {
-    free(file->vertices[i]);
-  }
-  free(file->vertices);
-  for (int i = 0; i < file->surfacesCount; i++) {
-    free(file->surfaces[i]->verticesIndices);
-    free(file->surfaces[i]->normalsIndices);
-    free(file->surfaces[i]);
-  }
-  free(file->surfaces);
-  for (int i = 0; i < file->normalsCount; i++) {
-    free(file->normals[i]);
-  }
-  free(file->normals);
 }

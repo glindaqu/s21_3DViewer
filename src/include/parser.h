@@ -64,15 +64,24 @@ typedef struct {
  * @author yukikoqo
  */
 void initParser(ObjFile_t* file);
+
 /**
  * @brief Перечисление кодов-состояний, которые может вернуть парсер
  *
  * @param FILE_DOES_NOT_EXISTS - файл не был открыт, ошибка
  * @param OK - ошибок в ходе парсинга не возникло
+ * @param INVALID_FILE_FORMAT - расширение файла отлично от .obj
+ * @param FILE_CONTAINS_UNEXPECTED_CONTENT - парсинг файла не дал результата
+ * (структура пуста)
  *
  * @author glindaqu
  */
-typedef enum { FILE_DOES_NOT_EXISTS, OK } ParserReturnCode;
+typedef enum {
+  FILE_DOES_NOT_EXISTS,
+  OK,
+  INVALID_FILE_FORMAT,
+  FILE_CONTAINS_UNEXPECTED_CONTENT
+} ParserReturnCode;
 
 /**
  * @brief Функция для очистки памяти после работы с файлом
