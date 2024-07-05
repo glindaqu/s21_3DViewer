@@ -1,0 +1,26 @@
+/* style.css */
+
+button {
+    background-image: none;
+    background-color: #4a90d9;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #3e7dc6;
+}
+
+label {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+}
+
+scale {
+    background-color: #4a90d9;
+}
+
+scale:hover {
+    background-color: #3e7dc6;
+}

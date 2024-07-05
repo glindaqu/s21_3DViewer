@@ -8,15 +8,15 @@
             <object class="GtkHeaderBar" id="header_bar">
                 <child type="start">
                     <object class="GtkButton" id="open_button">
-                    <property name="label">Open</property>
-                    <property name="action-name">win.open</property>
+                        <property name="label">Open</property>
+                        <property name="action-name">win.open</property>
                     </object>
                 </child>
                 <child type="end">
                     <object class="GtkMenuButton" id="primary_menu">
-                    <property name="primary">True</property>
-                    <property name="icon-name">open-menu-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Menu</property>
+                        <property name="primary">True</property>
+                        <property name="icon-name">open-menu-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Menu</property>
                     </object>
                 </child>
             </object>
@@ -32,11 +32,108 @@
                         <signal name="unrealize" handler="gl_fini" object="ViewerAppWindow" swapped="yes"/>
                         <signal name="render" handler="gl_draw" object="ViewerAppWindow" swapped="yes"/>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
                     </object>
                 </child>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label">Translate Object by XYZ</property>
+                    </object>
+                </child>
+                <child>
+    <object class="GtkBox" id="scale_box">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <child>
+            <object class="GtkBox" id="x_box">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> X Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="x_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="x_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
+                            </object>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkBox" id="y_box">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> Y Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="y_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="y_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
+                            </object>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkBox" id="z_box">
+                <property name="orientation">horizontal</property>
+                <property name="hexpand">True</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> Z Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="z_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="z_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
+                            </object>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+</child>
+
             </object>
         </child>
     </template>

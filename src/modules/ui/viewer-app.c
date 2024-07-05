@@ -25,9 +25,10 @@ G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 //   GtkWindow *win;
 
 //   win = gtk_application_get_active_window (GTK_APPLICATION (app));
-//   prefs = example_app_prefs_new (EXAMPLE_APP_WINDOW (win));
+//   prefs = viewer_app_prefs_new (VIEWER_APP_WINDOW (win));
 //   gtk_window_present (GTK_WINDOW (prefs));
 // }
+
 static void quit_activated(GSimpleAction *action, GVariant *parameter,
                            gpointer app) {
   const gchar *action_name = g_action_get_name(G_ACTION(action));
@@ -78,7 +79,6 @@ static void viewer_app_activate(GApplication *app) {
   ViewerApp *self = VIEWER_APP(app);
 
   if (self->window == NULL) {
-    printf("self->window = viewer_app_window_new (app);\n");
     self->window = viewer_app_window_new(VIEWER_APP(app));
   }
 
