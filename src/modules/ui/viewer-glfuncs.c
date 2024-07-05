@@ -100,7 +100,7 @@ gboolean init_shaders(guint *program_out, guint *mvp_location_out,
   GBytes *source;
   guint program = 0;
   guint mvp_location = 0;
-  guint vertex = 0, fragment = 0, geometry = 0;
+  guint vertex = 0, fragment = 0;
   guint position_location = 0;
   guint color_location = 0;
 

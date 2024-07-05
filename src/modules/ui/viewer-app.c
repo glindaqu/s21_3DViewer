@@ -53,18 +53,25 @@ static void viewer_app_init(ViewerApp *self) {
   g_object_set(app, "application-id", "school21.gdy._3dviewer", NULL);
 }
 
-static void viewer_app_startup(GApplication *app) {
-  const char *quit_accels[2] = {"<Ctrl>Q", NULL};
-  const char *open_accels[2] = {"<Ctrl>O", NULL};
+static const struct {
+  const char *action_name;
+  const char **accels;
+} app_actions[] = {
+    {"app.quit", (const char *[]){"<Ctrl>Q", NULL}},
+    {"win.open", (const char *[]){"<Ctrl>O", NULL}},
+};
 
+static void viewer_app_startup(GApplication *app) {
   G_APPLICATION_CLASS(viewer_app_parent_class)->startup(app);
+
+  for (size_t i = 0; i < G_N_ELEMENTS(app_actions); i++) {
+    gtk_application_set_accels_for_action(GTK_APPLICATION(app),
+                                          app_actions[i].action_name,
+                                          app_actions[i].accels);
+  }
 
   g_action_map_add_action_entries(G_ACTION_MAP(app), app_entries,
                                   G_N_ELEMENTS(app_entries), app);
-  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "app.quit",
-                                        quit_accels);
-  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "win.open",
-                                        open_accels);
 }
 
 static void viewer_app_activate(GApplication *app) {

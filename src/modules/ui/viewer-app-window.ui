@@ -37,49 +37,6 @@
                         <property name="vexpand">True</property>
                     </object>
                 </child>
-                <child>
-                        <object class="GtkBox" id="rotation_buttons_box">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">6</property>
-                        <child>
-                            <object class="GtkButton" id="rotate_x_plus">
-                            <property name="label">Rotate X +</property>
-                            <signal name="clicked" handler="rotate_x_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_x_minus">
-                            <property name="label">Rotate X -</property>
-                            <signal name="clicked" handler="rotate_x_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_y_plus">
-                            <property name="label">Rotate Y +</property>
-                            <signal name="clicked" handler="rotate_y_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_y_minus">
-                            <property name="label">Rotate Y -</property>
-                            <signal name="clicked" handler="rotate_y_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_z_plus">
-                            <property name="label">Rotate Z +</property>
-                            <signal name="clicked" handler="rotate_z_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_z_minus">
-                            <property name="label">Rotate Z -</property>
-                            <signal name="clicked" handler="rotate_z_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        </object>
-                    </child>
             </object>
         </child>
     </template>
