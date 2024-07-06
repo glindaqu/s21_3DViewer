@@ -4,7 +4,7 @@ CC = gcc
 GCC_FLAGS = -Wall -Werror -Wextra -Wno-unused-function -g
 CHECK_FLAGS = $(shell pkg-config --cflags check) $(shell pkg-config --libs check)
 GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4)
-UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-app-window.o modules/ui/viewer-error.o modules/ui/viewer-glfuncs.o
+UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-app-window.o modules/ui/viewer-error.o modules/ui/viewer-glfuncs.o modules/ui/viewer-app-settings.o
 
 all: build clang-format
 

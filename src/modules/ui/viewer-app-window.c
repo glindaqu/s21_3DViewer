@@ -10,6 +10,7 @@ struct _ViewerAppWindow {
   GtkApplicationWindow parent_instance;
 
   GtkHeaderBar *header_bar;
+  GSettings *settings;
 
   mvp_matrix_movement_t matrix_movement;
 
@@ -51,8 +52,6 @@ struct _ViewerAppWindowClass {
 G_DEFINE_TYPE(ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
 static void gl_init(ViewerAppWindow *self) {
-  gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
-
   GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
   if (error != NULL) {
     g_warning("GL area error: %s", error->message);
@@ -70,13 +69,9 @@ static void gl_init(ViewerAppWindow *self) {
     g_error_free(error);
     return;
   }
-  init_buffers(self->obj_file, self->position_index, self->color_index,
-               &self->vao);
 }
 
 static void gl_fini(ViewerAppWindow *self) {
-  gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
-
   if (gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area)) != NULL) return;
 
   if (self->vao != 0) glDeleteVertexArrays(1, &self->vao);
@@ -87,9 +82,10 @@ static void gl_fini(ViewerAppWindow *self) {
 
 static void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->program);
-  glUniformMatrix4fv(self->mvp_location, 1, GL_FALSE, self->mvp_matrix->mvp);
+  glUniformMatrix4fv(self->mvp_location, 1, GL_FALSE,
+                     &self->mvp_matrix->mvp[0]);
   glBindVertexArray(self->vao);
-  glDrawElements(GL_LINE_LOOP, self->obj_file->surfacesCount * 6,
+  glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 6,
                  GL_UNSIGNED_INT, 0);
 
   glBindVertexArray(0);
@@ -97,25 +93,61 @@ static void gl_model_draw(ViewerAppWindow *self) {
 }
 
 static gboolean gl_draw(ViewerAppWindow *self) {
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   gl_model_draw(self);
 
   glFlush();
 
-  return FALSE;
+  return TRUE;
+}
+
+typedef struct {
+  GtkLabel *model_name_label;
+  ObjFile_t *obj_file;
+} AppData;
+
+const char *format_number(int number) {
+  static char buffer[20];
+  if (number >= 1000000) {
+    snprintf(buffer, sizeof(buffer), "%.1fM", number / 1000000.0);
+  } else if (number >= 1000) {
+    snprintf(buffer, sizeof(buffer), "%.1fK", number / 1000.0);
+  } else {
+    snprintf(buffer, sizeof(buffer), "%d", number);
+  }
+  return buffer;
+}
+
+void update_label_text(AppData *self) {
+  const char *basename = g_path_get_basename(self->obj_file->fileName);
+  const char *formatted_vertices = format_number(self->obj_file->verticesCount);
+  const char *formatted_surfaces = format_number(self->obj_file->surfacesCount);
+  char *model_name;
+  if (strlen(basename) > 9) {
+    model_name = g_strdup_printf("*...[.obj]");
+  } else {
+    model_name = g_strdup_printf("%s", basename);
+  }
+
+  char *label_text =
+      g_strdup_printf("Model: %s, Vertices: %3s, Surfaces: %3s", model_name,
+                      formatted_vertices, formatted_surfaces);
+  gtk_label_set_text(GTK_LABEL(self->model_name_label), label_text);
+  g_free(label_text);
+  g_free(model_name);
 }
 
 static void open_file(ViewerAppWindow *self, GFile *file) {
-  if (self->obj_file->fileName != NULL) {
-    removeObjFile(self->obj_file);
-    initParser(self->obj_file);
-  }
-
   if (file == NULL) {
     g_printerr("Unable to open file\n");
     return;
+  }
+
+  if (self->obj_file->fileName != NULL) {
+    removeObjFile(self->obj_file);
+    initParser(self->obj_file);
   }
 
   self->obj_file->fileName = g_file_peek_path(file);
@@ -125,24 +157,32 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
     return;
   }
 
-  if (self->vao != 0) {
-    glDeleteVertexArrays(1, &self->vao);
-    self->vao = 0;
+  gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
+
+  GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
+  if (error != NULL) {
+    g_warning("GL area error: %s", error->message);
+    g_error_free(error);
+    return;
   }
 
-  gl_init(self);
+  if (self->vao != 0) glDeleteVertexArrays(1, &self->vao);
+  if (self->vbo != 0) glDeleteBuffers(1, &self->vbo);
+  if (self->ebo != 0) glDeleteBuffers(1, &self->ebo);
+
+  init_buffers(self->obj_file, self->position_index, self->color_index,
+               &self->vao);
 
   init_mvp_matrix(self->mvp_matrix);
   gtk_range_set_value(GTK_RANGE(self->x_scale), 0);
   gtk_range_set_value(GTK_RANGE(self->y_scale), 0);
   gtk_range_set_value(GTK_RANGE(self->z_scale), 0);
 
-  gtk_label_set_text(
-      GTK_LABEL(self->model_name_label),
-      g_strdup_printf("Model: %10s, Vertices: %3d, Surfaces: %3d",
-                      g_path_get_basename(self->obj_file->fileName),
-                      self->obj_file->verticesCount,
-                      self->obj_file->surfacesCount));
+  AppData app_data;
+  app_data.obj_file = self->obj_file;
+  app_data.model_name_label = GTK_LABEL(self->model_name_label);
+
+  update_label_text(&app_data);
 
   gtk_widget_queue_draw(self->gl_drawing_area);
 }
@@ -246,8 +286,27 @@ static void on_scale_value_changed(GtkRange *range, ViewerAppWindow *self) {
   gtk_widget_queue_draw(self->gl_drawing_area);
 }
 
+static void viewer_app_window_dispose(GObject *object) {
+  ViewerAppWindow *win;
+
+  win = VIEWER_APP_WINDOW(object);
+  if (win->mvp_matrix) {
+    free(win->mvp_matrix);
+    win->mvp_matrix = NULL;
+  }
+
+  if (win->obj_file) {
+    removeObjFile(win->obj_file);
+    free(win->obj_file);
+    win->obj_file = NULL;
+  }
+
+  G_OBJECT_CLASS(win)->dispose(object);
+}
+
 static void viewer_app_window_class_init(ViewerAppWindowClass *klass) {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
+  G_OBJECT_CLASS(klass)->dispose = viewer_app_window_dispose;
 
   gtk_widget_class_set_template_from_resource(
       widget_class,
@@ -337,24 +396,6 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
                    G_CALLBACK(on_scale_value_changed), self);
 
   gtk_window_set_icon_name(GTK_WINDOW(self), "viewer");
-}
-
-static void viewer_app_window_dispose(GObject *object) {
-  ViewerAppWindow *win;
-
-  win = VIEWER_APP_WINDOW(object);
-  if (win->mvp_matrix) {
-    free(win->mvp_matrix);
-    win->mvp_matrix = NULL;
-  }
-
-  if (win->obj_file) {
-    removeObjFile(win->obj_file);
-    free(win->obj_file);
-    win->obj_file = NULL;
-  }
-
-  G_OBJECT_CLASS(win)->dispose(object);
 }
 
 GtkWidget *viewer_app_window_new(ViewerApp *app) {
