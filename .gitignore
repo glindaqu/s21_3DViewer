@@ -3,6 +3,8 @@
 
 #gtk
 resources.c
+*.compiled
+*.valid
 
 #clangd
 .cache
