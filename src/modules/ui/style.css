@@ -23,9 +23,10 @@ label {
 
 #model_label {
 
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     font-weight: bold;
     font-style: italic;
+    font-size: 14px;
 }
 
 scale {

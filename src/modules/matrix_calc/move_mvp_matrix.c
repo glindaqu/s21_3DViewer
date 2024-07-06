@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "../../include/matrix_calc.h"
 
 void move_mvp_matrix(gl_matrix *res, mvp_matrix_movement_t *movement) {
@@ -24,11 +22,4 @@ void move_mvp_matrix(gl_matrix *res, mvp_matrix_movement_t *movement) {
 
   multiply_matrices(&translate_matrix, &rotation_matrix, &temp_matrix);
   multiply_matrices(&temp_matrix, &scale_matrix, res);
-  for (int i = 0; i < 16; ++i) {
-    printf("%f ", res->mvp[i]);
-    if ((i + 1) % 4 == 0) {
-      printf("\n");
-    }
-  }
-  // multiply_matrices(&rotation_matrix, &temp_matrix, res);
 }

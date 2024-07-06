@@ -139,7 +139,7 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
 
   gtk_label_set_text(
       GTK_LABEL(self->model_name_label),
-      g_strdup_printf("Model: %s, Vertices: %d, Surfaces: %d",
+      g_strdup_printf("Model: %10s, Vertices: %3d, Surfaces: %3d",
                       g_path_get_basename(self->obj_file->fileName),
                       self->obj_file->verticesCount,
                       self->obj_file->surfacesCount));
