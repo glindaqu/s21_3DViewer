@@ -28,7 +28,7 @@ test-parser:
 
 gcov-parser: test-parser
 	@lcov -t "test_coverage" -o test_coverage.info -c -d .
-	@genhtml -o report test_coverage.info
+	@genhtml -o test/parser/report test_coverage.info
 
 clang-format-check:
 	@find . -name "*.c" -o -name "*.h" -o -name "*.cpp" | xargs clang-format -n --style=Google 
