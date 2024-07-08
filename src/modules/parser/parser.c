@@ -14,6 +14,7 @@ static void initParser(ObjFile_t* file);
 static int checkFileFormat(ObjFile_t* file);
 
 ParserReturnCode parse(ObjFile_t* file) {
+  removeObjFile(file);
   FILE* objFilePtr = fopen(file->fileName, "r");
   if (objFilePtr == NULL) {
     return FILE_DOES_NOT_EXISTS;
@@ -39,17 +40,17 @@ void removeObjFile(ObjFile_t* file) {
   for (int i = 0; i < file->verticesCount; i++) {
     free(file->vertices[i]);
   }
-  free(file->vertices);
+  if (file->vertices != NULL) free(file->vertices);
   for (int i = 0; i < file->surfacesCount; i++) {
     free(file->surfaces[i]->verticesIndices);
     free(file->surfaces[i]->normalsIndices);
     free(file->surfaces[i]);
   }
-  free(file->surfaces);
+  if (file->surfaces != NULL) free(file->surfaces);
   for (int i = 0; i < file->normalsCount; i++) {
     free(file->normals[i]);
   }
-  free(file->normals);
+  if (file->normals != NULL) free(file->normals);
 }
 
 static int checkFileFormat(ObjFile_t* file) {
