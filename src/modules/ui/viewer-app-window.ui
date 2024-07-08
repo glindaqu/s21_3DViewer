@@ -8,78 +8,140 @@
             <object class="GtkHeaderBar" id="header_bar">
                 <child type="start">
                     <object class="GtkButton" id="open_button">
-                    <property name="label">Open</property>
-                    <property name="action-name">win.open</property>
+                        <property name="label">Open</property>
+                        <property name="action-name">win.open</property>
                     </object>
                 </child>
                 <child type="end">
                     <object class="GtkMenuButton" id="primary_menu">
-                    <property name="primary">True</property>
-                    <property name="icon-name">open-menu-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Menu</property>
+                        <property name="primary">True</property>
+                        <property name="icon-name">open-menu-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Menu</property>
                     </object>
                 </child>
             </object>
         </child>
         <child>
             <object class="GtkBox" id="main_box">
+                <property name="name">main_box</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">6</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel" id="model_name_label">
+                        <property name="label">Model Name</property>
+                        <property name="name">model_label</property>
+                        <property name="xalign">0</property>
+                    </object>
+                </child>
                 <child>
                     <object class="GtkGLArea" id="gl_drawing_area">
                         <signal name="realize" handler="gl_init" object="ViewerAppWindow" swapped="yes"/>
                         <signal name="unrealize" handler="gl_fini" object="ViewerAppWindow" swapped="yes"/>
                         <signal name="render" handler="gl_draw" object="ViewerAppWindow" swapped="yes"/>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
                     </object>
                 </child>
                 <child>
-                        <object class="GtkBox" id="rotation_buttons_box">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">6</property>
-                        <child>
-                            <object class="GtkButton" id="rotate_x_plus">
-                            <property name="label">Rotate X +</property>
-                            <signal name="clicked" handler="rotate_x_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
+                    <object class="GtkLabel">
+                        <property name="label">Translate Object by XYZ</property>
+                    </object>
+                </child>
+                <child>
+    <object class="GtkBox" id="scale_box">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <child>
+            <object class="GtkBox" id="x_box">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> X Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="x_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="x_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
                             </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_x_minus">
-                            <property name="label">Rotate X -</property>
-                            <signal name="clicked" handler="rotate_x_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkBox" id="y_box">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> Y Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="y_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="y_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
                             </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_y_plus">
-                            <property name="label">Rotate Y +</property>
-                            <signal name="clicked" handler="rotate_y_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkBox" id="z_box">
+                <property name="orientation">horizontal</property>
+                <property name="hexpand">True</property>
+                <property name="spacing">10</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label"> Z Axis</property>
+                        <property name="xalign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkScale" id="z_scale">
+                        <property name="orientation">horizontal</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">
+                            <object class="GtkAdjustment" id="z_adjustment">
+                                <property name="lower">-1</property>
+                                <property name="upper">1</property>
+                                <property name="value">0</property>
+                                <property name="step_increment">0.01</property>
+                                <property name="page_increment">1</property>
+                                <property name="page_size">0</property>
                             </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_y_minus">
-                            <property name="label">Rotate Y -</property>
-                            <signal name="clicked" handler="rotate_y_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_z_plus">
-                            <property name="label">Rotate Z +</property>
-                            <signal name="clicked" handler="rotate_z_plus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        <child>
-                            <object class="GtkButton" id="rotate_z_minus">
-                            <property name="label">Rotate Z -</property>
-                            <signal name="clicked" handler="rotate_z_minus_clicked" object="ViewerAppWindow" swapped="yes"/>
-                            </object>
-                        </child>
-                        </object>
-                    </child>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+</child>
+
             </object>
         </child>
     </template>

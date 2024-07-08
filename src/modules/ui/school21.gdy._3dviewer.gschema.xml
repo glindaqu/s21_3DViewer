@@ -1,0 +1,51 @@
+<schemalist>
+  <schema id="school21.gdy._3dviewer" path="/src/modules/ui/school21/gdy/3dviewer/">
+    <!-- Настройки проекции -->
+    <key name="projection-type" type="s">
+      <default>'parallel'</default>
+      <summary>Type of projection</summary>
+      <description>The type of projection to use (parallel or central).</description>
+    </key>
+
+    <!-- Настройки ребер -->
+    <key name="edge-type" type="s">
+      <default>'solid'</default>
+      <summary>Type of edges</summary>
+      <description>The type of edges to display (solid or dashed).</description>
+    </key>
+    <key name="edge-color" type="s">
+      <default>'#000000'</default>
+      <summary>Color of edges</summary>
+      <description>The color of the edges in hexadecimal format.</description>
+    </key>
+    <key name="edge-thickness" type="i">
+      <default>1</default>
+      <summary>Thickness of edges</summary>
+      <description>The thickness of the edges in pixels.</description>
+    </key>
+
+    <!-- Настройки вершин -->
+    <key name="vertex-display" type="s">
+      <default>'circle'</default>
+      <summary>Display method of vertices</summary>
+      <description>The method of displaying vertices (none, circle, square).</description>
+    </key>
+    <key name="vertex-color" type="s">
+      <default>'#000000'</default>
+      <summary>Color of vertices</summary>
+      <description>The color of the vertices in hexadecimal format.</description>
+    </key>
+    <key name="vertex-size" type="i">
+      <default>3</default>
+      <summary>Size of vertices</summary>
+      <description>The size of the vertices in pixels.</description>
+    </key>
+
+    <!-- Настройка цвета фона -->
+    <key name="background-color" type="s">
+      <default>'#FFFFFF'</default>
+      <summary>Background color</summary>
+      <description>The background color in hexadecimal format.</description>
+    </key>
+  </schema>
+</schemalist>

@@ -1,0 +1,38 @@
+/* style.css */
+
+button {
+    background-image: none;
+    background-color: #4a90d9;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #3e7dc6;
+}
+
+label {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+}
+
+#main_box {
+    padding: 10px;
+}
+
+#model_label {
+
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 14px;
+}
+
+scale {
+    background-color: #4a90d9;
+}
+
+scale:hover {
+    background-color: #3e7dc6;
+}

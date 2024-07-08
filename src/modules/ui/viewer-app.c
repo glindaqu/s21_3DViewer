@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 
+#include "viewer-app-settings.h"
 #include "viewer-app-window.h"
 
 struct _ViewerApp {
@@ -16,18 +17,16 @@ struct _ViewerAppClass {
 
 G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 
-// static void
-// preferences_activated (GSimpleAction *action,
-//                        GVariant      *parameter,
-//                        gpointer       app)
-// {
-//   ViewerApp *prefs;
-//   GtkWindow *win;
+static void preferences_activated(GSimpleAction *action, GVariant *parameter,
+                                  gpointer app) {
+  ViewerAppSettings *prefs;
+  GtkWindow *win;
 
-//   win = gtk_application_get_active_window (GTK_APPLICATION (app));
-//   prefs = example_app_prefs_new (EXAMPLE_APP_WINDOW (win));
-//   gtk_window_present (GTK_WINDOW (prefs));
-// }
+  win = gtk_application_get_active_window(GTK_APPLICATION(app));
+  prefs = viewer_app_settings_new(VIEWER_APP_WINDOW(win));
+  gtk_window_present(GTK_WINDOW(prefs));
+}
+
 static void quit_activated(GSimpleAction *action, GVariant *parameter,
                            gpointer app) {
   const gchar *action_name = g_action_get_name(G_ACTION(action));
@@ -44,7 +43,7 @@ static void quit_activated(GSimpleAction *action, GVariant *parameter,
 }
 
 static GActionEntry app_entries[] = {
-    // { "preferences", preferences_activated, NULL, NULL, NULL, {0} },
+    {"preferences", preferences_activated, NULL, NULL, NULL, {0}},
     {"quit", quit_activated, NULL, NULL, NULL, {0}}};
 
 static void viewer_app_init(ViewerApp *self) {
@@ -53,25 +52,31 @@ static void viewer_app_init(ViewerApp *self) {
   g_object_set(app, "application-id", "school21.gdy._3dviewer", NULL);
 }
 
-static void viewer_app_startup(GApplication *app) {
-  const char *quit_accels[2] = {"<Ctrl>Q", NULL};
-  const char *open_accels[2] = {"<Ctrl>O", NULL};
+static const struct {
+  const char *action_name;
+  const char **accels;
+} app_actions[] = {
+    {"app.quit", (const char *[]){"<Ctrl>Q", NULL}},
+    {"win.open", (const char *[]){"<Ctrl>O", NULL}},
+};
 
+static void viewer_app_startup(GApplication *app) {
   G_APPLICATION_CLASS(viewer_app_parent_class)->startup(app);
+
+  for (size_t i = 0; i < G_N_ELEMENTS(app_actions); i++) {
+    gtk_application_set_accels_for_action(GTK_APPLICATION(app),
+                                          app_actions[i].action_name,
+                                          app_actions[i].accels);
+  }
 
   g_action_map_add_action_entries(G_ACTION_MAP(app), app_entries,
                                   G_N_ELEMENTS(app_entries), app);
-  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "app.quit",
-                                        quit_accels);
-  gtk_application_set_accels_for_action(GTK_APPLICATION(app), "win.open",
-                                        open_accels);
 }
 
 static void viewer_app_activate(GApplication *app) {
   ViewerApp *self = VIEWER_APP(app);
 
   if (self->window == NULL) {
-    printf("self->window = viewer_app_window_new (app);\n");
     self->window = viewer_app_window_new(VIEWER_APP(app));
   }
 

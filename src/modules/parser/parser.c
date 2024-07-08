@@ -10,7 +10,6 @@
 static void readVertex(ObjFile_t* file, char* line);
 static void readNormal(ObjFile_t* file, char* line);
 static void readSurface(ObjFile_t* file, char* line);
-static void initParser(ObjFile_t* file);
 static int checkFileFormat(ObjFile_t* file);
 
 ParserReturnCode parse(ObjFile_t* file) {
@@ -54,11 +53,11 @@ void removeObjFile(ObjFile_t* file) {
 }
 
 static int checkFileFormat(ObjFile_t* file) {
-  if (strstr(file->fileName, ".obj")) return -1;
+  if (!strstr(file->fileName, ".obj")) return -1;
   return 1;
 }
 
-static void initParser(ObjFile_t* file) {
+void initParser(ObjFile_t* file) {
   file->verticesCount = 0;
   file->normalsCount = 0;
   file->surfacesCount = 0;
