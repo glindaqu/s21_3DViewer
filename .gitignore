@@ -62,3 +62,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# allow 3d object files
+!./src/data/*.obj
