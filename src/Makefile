@@ -23,8 +23,12 @@ build-matrix_calc:
 test-parser:
 	@$(MAKE) -C modules/parser
 	@checkmk tests/parser/parser.check > tests/parser/parser.c
-	@$(CC) $(GCC_FLAGS) $(CHECK_FLAGS) -I./include/ -L./include/ tests/parser/parser.c -o tests/parser/test-parser.out -lparser
+	@$(CC) --coverage $(GCC_FLAGS) $(CHECK_FLAGS) -I./include/ -L./include/ tests/parser/parser.c -o tests/parser/test-parser.out -lparser
 	@./tests/parser/test-parser.out
+
+gcov-parser: test-parser
+	@lcov -t "test_coverage" -o test_coverage.info -c -d .
+	@genhtml -o report test_coverage.info
 
 clang-format-check:
 	@find . -name "*.c" -o -name "*.h" -o -name "*.cpp" | xargs clang-format -n --style=Google 
