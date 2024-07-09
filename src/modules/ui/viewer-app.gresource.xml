@@ -5,7 +5,8 @@
     <file preprocess="xml-stripblanks">viewer-app-menu.ui</file>
     <file preprocess="xml-stripblanks">viewer-app-settings.ui</file>
     <file>glarea-fragment.glsl</file>
-    <file>style.css</file>
+    <file>window-style.css</file>
+    <file>appsettings-style.css</file>
     <file>glarea-vertex.glsl</file>
   </gresource>
 </gresources>

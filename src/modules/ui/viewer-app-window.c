@@ -4,6 +4,7 @@
 
 #include "../../include/matrix_calc.h"
 #include "../../include/parser.h"
+#include "viewer-app-settings.h"
 #include "viewer-glfuncs.h"
 
 struct _ViewerAppWindow {
@@ -35,8 +36,17 @@ struct _ViewerAppWindow {
   guint ebo;
   guint program;
   guint mvp_location;
-  guint position_index;
+  GLint loc_res;
+  GLint loc_factor;
+  GLint loc_pattern;
+  GLint loc_thickness;
+  float lineColor[3];
+
+  guint projection_index;
   guint color_index;
+
+  GLushort pattern;
+  GLfloat factor;
 
   /* Mouse state */
   gboolean alt_key;
@@ -52,19 +62,24 @@ struct _ViewerAppWindowClass {
 G_DEFINE_TYPE(ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
 static void gl_init(ViewerAppWindow *self) {
+  gtk_gl_area_make_current (GTK_GL_AREA(self->gl_drawing_area));
+
   GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
   if (error != NULL) {
-    g_warning("GL area error: %s", error->message);
+    g_warning(
+      "GL area error: %s", error->message);
     g_error_free(error);
     return;
   }
-
+  glEnable(GL_LINE_SMOOTH);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
+  init_buffers(self->obj_file, 0, 0, &self->vao, &self->vbo, &self->ebo);
+
   error = NULL;
-  if (!init_shaders(&self->program, &self->mvp_location, &self->position_index,
-                    &self->color_index, &error)) {
+  if (!init_shaders(&self->program, &self->mvp_location,
+                    &self->projection_index, &self->color_index, &self->loc_res, &self->loc_pattern, &self->loc_factor , &self->loc_thickness, &error)) {
     gtk_gl_area_set_error(GTK_GL_AREA(self->gl_drawing_area), error);
     g_error_free(error);
     return;
@@ -72,6 +87,8 @@ static void gl_init(ViewerAppWindow *self) {
 }
 
 static void gl_fini(ViewerAppWindow *self) {
+  gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
+  
   if (gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area)) != NULL) return;
 
   if (self->vao != 0) glDeleteVertexArrays(1, &self->vao);
@@ -82,11 +99,19 @@ static void gl_fini(ViewerAppWindow *self) {
 
 static void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->program);
+
+  glUniform3fv(self->loc_thickness, 1, self->lineColor);
+  glUniform1ui(self->loc_pattern, self->pattern);
+  glUniform1f(self->loc_factor, self->factor);
+  glUniform2f(self->loc_res, 800.f, 800.f);
+  
   glUniformMatrix4fv(self->mvp_location, 1, GL_FALSE,
                      &self->mvp_matrix->mvp[0]);
+                     
   glBindVertexArray(self->vao);
-  glDrawElements(GL_TRIANGLES, self->obj_file->surfacesCount * 6,
-                 GL_UNSIGNED_INT, 0);
+
+  glDrawElements(GL_LINES, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
+                 0);
 
   glBindVertexArray(0);
   glUseProgram(0);
@@ -156,8 +181,13 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
     g_printerr("Unable to parse “%s”\n", g_file_peek_path(file));
     return;
   }
-
+  
   gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
+
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR) {
+    g_warning("OpenGL error before glDrawElements: %d\n", err);
+  }
 
   GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
   if (error != NULL) {
@@ -170,8 +200,8 @@ static void open_file(ViewerAppWindow *self, GFile *file) {
   if (self->vbo != 0) glDeleteBuffers(1, &self->vbo);
   if (self->ebo != 0) glDeleteBuffers(1, &self->ebo);
 
-  init_buffers(self->obj_file, self->position_index, self->color_index,
-               &self->vao);
+  init_buffers(self->obj_file, self->projection_index, self->color_index,
+               &self->vao, &self->vbo, &self->ebo);
 
   init_mvp_matrix(self->mvp_matrix);
   gtk_range_set_value(GTK_RANGE(self->x_scale), 0);
@@ -286,8 +316,109 @@ static void on_scale_value_changed(GtkRange *range, ViewerAppWindow *self) {
   gtk_widget_queue_draw(self->gl_drawing_area);
 }
 
+static void open_settings_dialog(GAction *action, GVariant *parameter,
+                                 ViewerAppWindow *self) {
+  g_print("Opening settings dialog\n");
+  ViewerAppSettings *settings_dialog = viewer_app_settings_new(self);
+  gtk_window_present(GTK_WINDOW(settings_dialog));
+}
+
+void set_orthographic_projection(float left, float right, float bottom,
+                                 float top, float near, float far) {
+  // glMatrixMode(GL_PROJECTION);
+  // glLoadIdentity();
+  // glOrtho(left, right, bottom, top, near, far);
+  // glMatrixMode(GL_MODELVIEW);
+}
+
+void set_perspective_projection(float left, float right, float bottom,
+                                float top, float near, float far) {
+  // glMatrixMode(GL_PROJECTION);
+  // glLoadIdentity();
+  // glFrustum(left, right, bottom, top, near, far);
+  // glMatrixMode(GL_MODELVIEW);
+}
+
+void set_edge_thickness(float thickness) {
+  GLfloat lineWidthRange[2] = {0.0f, 0.0f};
+  glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+  g_print("Setting edge thickness to %f\n", thickness);
+  glLineWidth(thickness / 10.f);
+}
+
+void set_edge_strippled(ViewerAppWindow *self) {
+  self->pattern = 0x18ff;
+  self->factor = 2.f;
+} 
+
+void set_edge_not_strippled(ViewerAppWindow *self) {
+  self->pattern = 0xffff;
+  self->factor = 1.f;
+}
+
+static void apply_projection_type_setting(ViewerAppWindow *self) {
+  const gchar *projection_type = g_settings_get_string(self->settings, "projection-type");
+  if (g_strcmp0(projection_type, "Parallel") == 0) {
+    set_orthographic_projection(-1.0, 1.0, -1.0, 1.0, 5, 100);
+  } else if (g_strcmp0(projection_type, "Central") == 0) {
+    set_perspective_projection(-1.0, 1.0, -1.0, 1.0, 5, 100);
+  }
+}
+
+static void apply_edge_type_setting(ViewerAppWindow *self) {
+  const gchar *edge_type = g_settings_get_string(self->settings, "edge-type");
+  if (g_strcmp0(edge_type, "Solid") == 0) {
+    set_edge_not_strippled(self);
+  } else if (g_strcmp0(edge_type, "Dashed") == 0) {
+    set_edge_strippled(self);
+  }
+}
+
+
+static void apply_edge_thickness_setting(ViewerAppWindow *self) {
+  set_edge_thickness(g_settings_get_int(self->settings, "edge-thickness"));
+}
+
+static void set_line_color(const GVariant *color_variant, float* lineColor) {
+  gchar **color_str_array = g_variant_get_strv(color_variant, NULL);
+  for (int i = 0; i < 3; i++) {
+    lineColor[i] = g_ascii_strtod(color_str_array[i], NULL);
+  }
+  g_strfreev(color_str_array);
+  g_variant_unref(color_variant);
+}
+
+static void apply_line_color_setting(ViewerAppWindow *self) {
+  GVariant *color_variant = g_settings_get_value(self->settings, "line-color");
+  set_line_color(color_variant, self->lineColor);
+}
+
+static void on_settings_changed(GSettings *settings, gchar *key,
+                                ViewerAppWindow *self) {
+  if (g_strcmp0(key, "projection-type") == 0) {
+    apply_projection_type_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "edge-type") == 0) {
+    apply_edge_type_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "edge-thickness") == 0) {
+    apply_edge_thickness_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "line-color") == 0) {
+    apply_line_color_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+}
 static void viewer_app_window_dispose(GObject *object) {
-  ViewerAppWindow *win;
+  ViewerAppWindow *win = VIEWER_APP_WINDOW(object);
+
+  g_clear_object(&win->settings);
 
   win = VIEWER_APP_WINDOW(object);
   if (win->mvp_matrix) {
@@ -346,15 +477,20 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
 
   gtk_widget_init_template(GTK_WIDGET(self));
 
+  gtk_gl_area_set_required_version(GTK_GL_AREA(self->gl_drawing_area), 4, 6);
+
   GtkSettings *settings = gtk_settings_get_default();
   g_object_set(settings, "gtk-theme-name", "Adwaita-dark", NULL);
 
-  const char cssPath[] = "/src/modules/ui/school21/gdy/_3dviewer/style.css";
+  const char cssPath[] =
+      "/src/modules/ui/school21/gdy/_3dviewer/window-style.css";
   GtkCssProvider *cssProvider = gtk_css_provider_new();
   gtk_css_provider_load_from_resource(cssProvider, cssPath);
   gtk_style_context_add_provider_for_display(gdk_display_get_default(),
                                              GTK_STYLE_PROVIDER(cssProvider),
                                              GTK_STYLE_PROVIDER_PRIORITY_USER);
+
+  g_object_unref(cssProvider);
 
   GtkBuilder *builder = gtk_builder_new_from_resource(
       "/src/modules/ui/school21/gdy/_3dviewer/viewer-app-menu.ui");
@@ -366,6 +502,20 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   g_signal_connect(open_action, "activate",
                    G_CALLBACK(viewer_app_window__open_file_dialog), self);
   g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(open_action));
+
+  g_autoptr(GSimpleAction) settings_action =
+      g_simple_action_new("settings", NULL);
+  g_signal_connect(settings_action, "activate",
+                   G_CALLBACK(open_settings_dialog), self);
+  g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(settings_action));
+
+  self->settings = g_settings_new("school21.gdy._3dviewer");
+  g_signal_connect(self->settings, "changed", G_CALLBACK(on_settings_changed),
+                   self);
+
+  apply_projection_type_setting(self);
+  apply_edge_type_setting(self);
+  apply_edge_thickness_setting(self);
 
   GtkGesture *click_gesture = gtk_gesture_click_new();
   g_signal_connect(click_gesture, "pressed", G_CALLBACK(gl_button_press_event),
@@ -394,7 +544,7 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
                    G_CALLBACK(on_scale_value_changed), self);
   g_signal_connect(self->z_scale, "value-changed",
                    G_CALLBACK(on_scale_value_changed), self);
-
+  
   gtk_window_set_icon_name(GTK_WINDOW(self), "viewer");
 }
 

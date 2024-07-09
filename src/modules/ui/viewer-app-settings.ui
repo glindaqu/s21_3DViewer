@@ -1,8 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface> 
     <template class="ViewerAppSettings" parent="GtkDialog">
-        <property name="title" translatable="yes">Preferences</property>
-        <property name="resizable">0</property>
+        <property name="title" translatable="yes">View Settings</property>
+        <property name="resizable">1</property>
         <property name="modal">1</property>
+        <child internal-child="content_area">
+            <object class="GtkBox" id="content_area">
+                <child>
+                    <object class="GtkGrid" id="grid">
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <property name="row-spacing">12</property>
+                        <property name="column-spacing">12</property>
+                        <property name="halign">fill</property>
+                        <property name="valign">fill</property>
+                        <property name="hexpand">1</property>
+                        <property name="vexpand">1</property>
+
+                        <!-- Projection Type -->
+                        <child>
+                            <object class="GtkLabel" id="projection_label">
+                                <property name="label">_Projection-Type:</property> 
+                                <property name="mnemonic-widget">projection</property>
+                                <property name="use-underline">1</property>
+                                <layout>
+                                    <property name="column">0</property>
+                                    <property name="row">0</property>
+                                </layout>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkDropDown" id="projection">
+                                <property name="model">
+                                    <object class="GtkStringList">
+                                        <items>
+                                            <item translatable="yes">Parallel</item>
+                                            <item translatable="yes">Central</item>
+                                        </items>
+                                    </object>
+                                </property>
+                                <layout>
+                                    <property name="column">1</property>
+                                    <property name="row">0</property>
+                                </layout>
+                            </object>
+                        </child>
+
+                        <!-- Edge Type -->
+                        <child>
+                            <object class="GtkLabel" id="edge_type_label">
+                                <property name="label">_Edge-Type:</property>
+                                <property name="mnemonic-widget">edge_type</property>
+                                <property name="use-underline">1</property>
+                                <layout>
+                                    <property name="column">0</property>
+                                    <property name="row">1</property>
+                                </layout>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkDropDown" id="edge_type">
+                                <property name="model">
+                                    <object class="GtkStringList">
+                                        <items>
+                                            <item translatable="yes">Solid</item>
+                                            <item translatable="yes">Dashed</item>
+                                        </items>
+                                    </object>
+                                </property>
+                                <layout>
+                                    <property name="column">1</property>
+                                    <property name="row">1</property>
+                                </layout>
+                            </object>
+                        </child>
+
+                        <!-- Edge Width -->
+                        <child>
+                            <object class="GtkLabel" id="edge_thickness_label">
+                                <property name="label">_Edge-Width:</property>
+                                <property name="mnemonic-widget">edge_thickness_spin</property>
+                                <property name="use-underline">1</property>
+                                <layout>
+                                    <property name="column">0</property>
+                                    <property name="row">2</property>
+                                </layout>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkAdjustment" id="edge_thickness">
+                                <property name="lower">1</property>
+                                <property name="upper">10</property>
+                                <property name="step-increment">1</property>
+                                <property name="page-increment">5</property>
+                                <property name="value">1</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkSpinButton" id="edge_thickness_spin">
+                                <property name="adjustment">edge_thickness</property>
+                                <property name="climb-rate">0.5</property>
+                                <property name="digits">0</property>
+                                <layout>
+                                    <property name="column">1</property>
+                                    <property name="row">2</property>
+                                </layout>
+                            </object>
+                        </child>
+
+                        <!-- Line Color -->
+                        <child>
+                            <object class="GtkLabel" id="line_color_label">
+                                <property name="label">_Line-Color:</property>
+                                <property name="mnemonic-widget">line_color_button</property>
+                                <property name="use-underline">1</property>
+                                <layout>
+                                    <property name="column">0</property>
+                                    <property name="row">3</property>
+                                </layout>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkColorButton" id="line_color_button">
+                                <property name="use-alpha">false</property>
+                                <layout>
+                                    <property name="column">1</property>
+                                    <property name="row">3</property>
+                                </layout>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
     </template>
 </interface>

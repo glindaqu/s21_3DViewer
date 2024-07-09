@@ -2,22 +2,30 @@
   <schema id="school21.gdy._3dviewer" path="/src/modules/ui/school21/gdy/3dviewer/">
     <!-- Настройки проекции -->
     <key name="projection-type" type="s">
-      <default>'parallel'</default>
+      <choices>
+        <choice value ="Parallel"/>
+        <choice value ="Central"/>
+      </choices>
+      <default>'Parallel'</default>
       <summary>Type of projection</summary>
       <description>The type of projection to use (parallel or central).</description>
     </key>
 
     <!-- Настройки ребер -->
     <key name="edge-type" type="s">
-      <default>'solid'</default>
+      <choices>
+        <choice value ="Solid"/>
+        <choice value ="Dashed"/>
+      </choices>
+      <default>'Solid'</default>
       <summary>Type of edges</summary>
       <description>The type of edges to display (solid or dashed).</description>
     </key>
-    <key name="edge-color" type="s">
-      <default>'#000000'</default>
-      <summary>Color of edges</summary>
-      <description>The color of the edges in hexadecimal format.</description>
-    </key>
+<key name="line-color" type="(dddd)">
+    <default>(1.0, 1.0, 1.0, 1.0)</default>
+    <summary>Line color</summary>
+    <description>The color of the lines in the 3D viewer.</description>
+</key>
     <key name="edge-thickness" type="i">
       <default>1</default>
       <summary>Thickness of edges</summary>

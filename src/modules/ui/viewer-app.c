@@ -17,16 +17,6 @@ struct _ViewerAppClass {
 
 G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 
-static void preferences_activated(GSimpleAction *action, GVariant *parameter,
-                                  gpointer app) {
-  ViewerAppSettings *prefs;
-  GtkWindow *win;
-
-  win = gtk_application_get_active_window(GTK_APPLICATION(app));
-  prefs = viewer_app_settings_new(VIEWER_APP_WINDOW(win));
-  gtk_window_present(GTK_WINDOW(prefs));
-}
-
 static void quit_activated(GSimpleAction *action, GVariant *parameter,
                            gpointer app) {
   const gchar *action_name = g_action_get_name(G_ACTION(action));
@@ -43,7 +33,6 @@ static void quit_activated(GSimpleAction *action, GVariant *parameter,
 }
 
 static GActionEntry app_entries[] = {
-    {"preferences", preferences_activated, NULL, NULL, NULL, {0}},
     {"quit", quit_activated, NULL, NULL, NULL, {0}}};
 
 static void viewer_app_init(ViewerApp *self) {
