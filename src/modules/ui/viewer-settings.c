@@ -64,18 +64,16 @@ void apply_edge_thickness_setting(ViewerAppWindow *self) {
   set_edge_thickness(g_settings_get_int(self->settings, "edge-thickness"));
 }
 
-void set_line_color(const GVariant *color_variant, float* lineColor) {
-  gchar **color_str_array = g_variant_get_strv(color_variant, NULL);
-  for (int i = 0; i < 3; i++) {
-    lineColor[i] = g_ascii_strtod(color_str_array[i], NULL);
-  }
-  g_strfreev(color_str_array);
+void apply_edge_color_setting(ViewerAppWindow *self) {
+  GVariant *color_variant = g_settings_get_value(self->settings, "edge-color");
+  g_variant_get(color_variant, "(iiii)", &self->edge_color[0], &self->edge_color[1], &self->edge_color[2], NULL);
   g_variant_unref(color_variant);
 }
 
-void apply_line_color_setting(ViewerAppWindow *self) {
-  GVariant *color_variant = g_settings_get_value(self->settings, "line-color");
-  set_line_color(color_variant, self->lineColor);
+void apply_background_color_setting(ViewerAppWindow *self) {
+  GVariant *color_variant = g_settings_get_value(self->settings, "background-color");
+  g_variant_get(color_variant, "(iiii)", &self->background_color.red, &self->background_color.green, &self->background_color.blue, &self->background_color.alpha);
+  g_variant_unref(color_variant);
 }
 
 void on_settings_changed(GSettings *settings, gchar *key,
@@ -95,8 +93,13 @@ void on_settings_changed(GSettings *settings, gchar *key,
     gtk_widget_queue_draw(self->gl_drawing_area);
   }
 
-  if (g_strcmp0(key, "line-color") == 0) {
-    apply_line_color_setting(self);
+  if (g_strcmp0(key, "edge-color") == 0) {
+    apply_edge_color_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "background-color") == 0) {
+    apply_background_color_setting(self);
     gtk_widget_queue_draw(self->gl_drawing_area);
   }
 }

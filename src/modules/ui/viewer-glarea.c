@@ -12,7 +12,7 @@ void gl_init(ViewerAppWindow *self) {
     g_error_free(error);
     return;
   }
-  glEnable(GL_LINE_SMOOTH);
+  // glEnable(GL_LINE_SMOOTH);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
@@ -38,7 +38,10 @@ void gl_fini(ViewerAppWindow *self) {
 void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->shader_vars.program);
 
-  glUniform3fv(self->shader_vars.loc_lineColor, 1, self->lineColor);
+  // glEnable(GL_LINE_STIPPLE);
+  // glLineStipple(1, 0x0F0F);
+
+  glUniform3fv(self->shader_vars.loc_lineColor, 1, self->edge_color);
   glUniform1ui(self->shader_vars.loc_pattern, self->pattern);
   glUniform1f(self->shader_vars.loc_factor, self->factor);
   glUniform2f(self->shader_vars.loc_res, 800.f, 800.f);
@@ -50,13 +53,16 @@ void gl_model_draw(ViewerAppWindow *self) {
 
   glDrawElements(GL_LINES, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
                  0);
+  glPointSize(10.f);
+  glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
+                 0);
 
   glBindVertexArray(0);
   glUseProgram(0);
 }
 
 gboolean gl_draw(ViewerAppWindow *self) {
-  glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+  glClearColor(self->background_color.red, self->background_color.green, self->background_color.blue, self->background_color.alpha);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   gl_model_draw(self);

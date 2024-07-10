@@ -28,7 +28,9 @@ void apply_edge_thickness_setting(ViewerAppWindow *self);
 
 void set_line_color(const GVariant *color_variant, float* lineColor);
 
-void apply_line_color_setting(ViewerAppWindow *self);
+void apply_edge_color_setting(ViewerAppWindow *self);
+
+void apply_background_color_setting(ViewerAppWindow *self);
 void on_settings_changed(GSettings *settings, gchar *key,
                                 ViewerAppWindow *self);
 #endif  // _VIEWER_SETTINGS_H

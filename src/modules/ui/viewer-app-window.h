@@ -44,7 +44,9 @@ struct _ViewerAppWindow {
   GLbuffers_t gl_buffers;
   GLshader_vars_t shader_vars;
 
-  float lineColor[3];
+  gfloat edge_color[3];
+  GdkRGBA background_color;
+
   GLushort pattern;
   GLfloat factor;
 

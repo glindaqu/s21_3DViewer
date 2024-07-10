@@ -9,7 +9,7 @@ struct _ViewerAppSettings {
 
   GtkWidget *projection;
   GtkWidget *edge_type;
-  GtkWidget *line_color_button;
+  GtkWidget *edge_color;
   GtkWidget *edge_thickness_spin;
   GtkWidget *vertex_display;
   GtkWidget *vertex_color;
@@ -19,29 +19,21 @@ struct _ViewerAppSettings {
 
 G_DEFINE_TYPE(ViewerAppSettings, viewer_app_settings, GTK_TYPE_DIALOG)
 
-static gboolean rgba_to_as(GValue *value, GVariant *variant, gpointer user_data) {
-    GdkRGBA rgba;
-    gchar *rgba_str;
-
-    g_variant_get(variant, "(dddd)", &rgba.red, &rgba.green, &rgba.blue, &rgba.alpha);
-    rgba_str = gdk_rgba_to_string(&rgba);
-    g_value_init(value, G_TYPE_STRING);
-    g_value_set_string(value, rgba_str);
-    g_free(rgba_str);
-
+static gboolean rgba_to_gvalue(GValue *value, GVariant *variant, gpointer user_data) {
+    gint rgba[4];
+    g_variant_get(variant, "(iiii)", &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
+    rgba[0] /= 255.f;
+    rgba[1] /= 255.f;
+    rgba[2] /= 255.f; 
+    g_value_set_boxed(value, rgba);
     return TRUE;
 }
 
-static GVariant *as_to_rgba(const GValue *value, const GVariantType *expected_type, gpointer user_data) {
-    GdkRGBA rgba;
-    const gchar *rgba_str = g_value_get_string(value);
-
-    if (rgba_str && gdk_rgba_parse(&rgba, rgba_str)) {
-        return g_variant_new("(dddd)", rgba.red, rgba.green, rgba.blue, rgba.alpha);
-    }
-
-    return NULL;
+static GVariant *gvalue_to_rgba(const GValue *value, const GVariantType *expected_type, gpointer user_data) {
+    gint *rgba = g_value_get_boxed(value);
+    return g_variant_new("(iiii)", rgba[0], rgba[1], rgba[2], rgba[3]);
 }
+
 
 static gboolean projection_to_pos(GValue *value, GVariant *variant,
                                   gpointer user_data) {
@@ -114,11 +106,13 @@ static void viewer_app_settings_init(ViewerAppSettings *self) {
                                  "selected", G_SETTINGS_BIND_DEFAULT,
                                  edge_type_to_pos, pos_to_edge_type, NULL, NULL);
 
+    g_settings_bind_with_mapping(self->settings, "background-color", self->background_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
+    g_settings_bind_with_mapping(self->settings, "edge-color", self->edge_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
     // Bind the GtkSpinButton, not the GtkAdjustment
-    g_settings_bind(self->settings, "edge-thickness", self->edge_thickness_spin, "value", G_SETTINGS_BIND_DEFAULT);
+    // g_settings_bind(self->settings, "edge-thickness", self->edge_thickness_spin, "value", G_SETTINGS_BIND_DEFAULT);
 
     // Bind the GtkColorButton with custom mapping
-    g_settings_bind_with_mapping(self->settings, "line-color", self->line_color_button, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_as, as_to_rgba, NULL, NULL);
+    // g_settings_bind_with_mapping(self->settings, "line-color", self->line_color_button, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_as, as_to_rgba, NULL, NULL);
 }
 
 static void viewer_app_settings_dispose(GObject *object) {
@@ -143,10 +137,8 @@ static void viewer_app_settings_class_init(ViewerAppSettingsClass *klass) {
                                          ViewerAppSettings, projection);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
                                          ViewerAppSettings, edge_type);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
-                                         ViewerAppSettings, edge_thickness_spin);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
-                                         ViewerAppSettings, line_color_button);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, edge_color);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, background_color);
 }
 
 ViewerAppSettings *viewer_app_settings_new(ViewerAppWindow *win) {
