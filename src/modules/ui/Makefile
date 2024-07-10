@@ -5,7 +5,8 @@ LIBS = $(shell $(PKGCONFIG) --libs gtk4 epoxy)
 GLIB_COMPILE_RESOURCES = $(shell $(PKGCONFIG) --variable=glib_compile_resources gio-2.0)
 GLIB_COMPILE_SCHEMAS = $(shell $(PKGCONFIG) --variable=glib_compile_schemas gio-2.0)
 
-SRC = viewer-app.c viewer-app-window.c viewer-error.c viewer-glfuncs.c viewer-app-settings.c
+SRC = viewer-app.c viewer-app-window.c viewer-error.c viewer-glfuncs.c viewer-app-settings.c \
+viewer-modelMovement.c viewer-glarea.c viewer-setLabel.c viewer-openFile.c viewer-settings.c
 BUILT_SRC = resources.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)

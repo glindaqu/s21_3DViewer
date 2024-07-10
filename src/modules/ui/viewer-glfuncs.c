@@ -1,14 +1,23 @@
 #include "viewer-glfuncs.h"
 
-void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index,
-                  guint *vao_out, guint* vbo_out, guint* ebo_out) {
-  guint vao, vbo, ebo;
+void glDelBuffers(GLbuffers_t *buffer) {
+  if (buffer->vao != 0) glDeleteVertexArrays(1, &buffer->vao);
+  if (buffer->vbo != 0) glDeleteBuffers(1, &buffer->vbo);
+  if (buffer->ebo != 0) glDeleteBuffers(1, &buffer->ebo);
+}
 
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
+void glDelProgram(GLuint* program) {
+  if (*program != 0) glDeleteProgram(*program);
+}
 
-  glBindVertexArray(vao);
+void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index, GLbuffers_t *buffers_out) {
+  GLbuffers_t buffers;
+
+  glGenVertexArrays(1, &buffers.vao);
+  glGenBuffers(1, &buffers.vbo);
+  glGenBuffers(1, &buffers.ebo);
+
+  glBindVertexArray(buffers.vao);
 
   Vertex_t *vertices = calloc(objFile->verticesCount, sizeof(Vertex_t));
   for (int i = 0; i < objFile->verticesCount; i++) {
@@ -23,12 +32,12 @@ void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index,
   }
 
   // Prepare vertex data
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, buffers.vbo);
   glBufferData(GL_ARRAY_BUFFER, objFile->verticesCount * sizeof(Vertex_t),
                vertices, GL_STATIC_DRAW);
 
   // Prepare index data
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers.ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                objFile->surfacesCount * 3 * sizeof(GLuint), indices,
                GL_STATIC_DRAW);
@@ -44,9 +53,7 @@ void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index,
   free(vertices);
   free(indices);
 
-  if (vao_out != NULL) *vao_out = vao;
-  if (vbo_out != NULL) *vbo_out = vbo;
-  if (ebo_out != NULL) *ebo_out = ebo;
+  if (buffers_out != NULL) *buffers_out = buffers;
 }
 
 guint create_shader(int shader_type, const char *source, GError **error,
@@ -80,16 +87,12 @@ guint create_shader(int shader_type, const char *source, GError **error,
   return shader != 0;
 }
 
-gboolean init_shaders(guint *program_out, guint *mvp_location_out,
-                      guint *projection_location_out, guint *color_location_out, GLint* loc_res_out, GLint* loc_pattern_out, GLint* loc_factor_out, GLint* loc_thickness_out,
+gboolean init_shaders(GLshader_vars_t *vars_out,
                       GError **error) {
   GBytes *source;
-  guint program = 0;
-  guint mvp_location = 0;
+  GLshader_vars_t vars;
+
   guint vertex = 0, fragment = 0;
-  guint projection_location = 0;
-  guint color_location = 0;
-  GLint loc_res = 0, loc_pattern = 0, loc_factor = 0, loc_thickness = 0;
 
   source = g_resources_lookup_data(
       "/src/modules/ui/school21/gdy/_3dviewer/glarea-vertex.glsl", 0, NULL);
@@ -105,21 +108,21 @@ gboolean init_shaders(guint *program_out, guint *mvp_location_out,
   g_bytes_unref(source);
   if (fragment == 0) goto out;
 
-  program = glCreateProgram();
+  vars.program = glCreateProgram();
 
-  glAttachShader(program, vertex);
-  glAttachShader(program, fragment);
+  glAttachShader(vars.program, vertex);
+  glAttachShader(vars.program, fragment);
 
-  glLinkProgram(program);
+  glLinkProgram(vars.program);
 
   int status = 0;
-  glGetProgramiv(program, GL_LINK_STATUS, &status);
+  glGetProgramiv(vars.program, GL_LINK_STATUS, &status);
   if (status == GL_FALSE) {
     int log_len = 0;
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_len);
+    glGetProgramiv(vars.program, GL_INFO_LOG_LENGTH, &log_len);
 
     char *buffer = g_malloc(log_len + 1);
-    glGetProgramInfoLog(program, log_len, NULL, buffer);
+    glGetProgramInfoLog(vars.program, log_len, NULL, buffer);
 
     g_set_error(error, VIEWER_ERROR, VIEWER_ERROR_SHADER_LINK,
                 "Linking failure in program: %s", buffer);
@@ -127,38 +130,30 @@ gboolean init_shaders(guint *program_out, guint *mvp_location_out,
 
     g_free(buffer);
 
-    glDeleteProgram(program);
-    program = 0;
+    glDeleteProgram(vars.program);
+    vars.program = 0;
 
     goto out;
   }
 
-  mvp_location = glGetUniformLocation(program, "mvp_matrix");
+  vars.mvp_location = glGetUniformLocation(vars.program, "mvp_matrix");
 
-  loc_res     = glGetUniformLocation(program, "u_resolution");
-  loc_pattern = glGetUniformLocation(program, "u_pattern");
-  loc_factor  = glGetUniformLocation(program, "u_factor");
-  loc_thickness = glGetUniformLocation(program, "lineColor");
+  vars.loc_res     = glGetUniformLocation(vars.program, "u_resolution");
+  vars.loc_pattern = glGetUniformLocation(vars.program, "u_pattern");
+  vars.loc_factor  = glGetUniformLocation(vars.program, "u_factor");
+  vars.loc_lineColor = glGetUniformLocation(vars.program, "lineColor");
 
   // projection_location = glGetUniformLocation(program, "projection_matrix");
   // color_location = glGetAttribLocation(program, "color");
 
-  glDetachShader(program, vertex);
-  glDetachShader(program, fragment);
+  glDetachShader(vars.program, vertex);
+  glDetachShader(vars.program, fragment);
 
 out:
   if (vertex != 0) glDeleteShader(vertex);
   if (fragment != 0) glDeleteShader(fragment);
 
-  if (program_out != NULL) *program_out = program;
-  if (mvp_location_out != NULL) *mvp_location_out = mvp_location;
-  if (projection_location_out != NULL)
-    *projection_location_out = projection_location;
-  if (color_location_out != NULL) *color_location_out = color_location;
-  if (loc_res_out != NULL) *loc_res_out = loc_res;
-  if (loc_pattern_out != NULL) *loc_pattern_out = loc_pattern;
-  if (loc_thickness_out != NULL) *loc_thickness_out = loc_thickness;
-  if (loc_factor_out != NULL) *loc_factor_out = loc_factor;
+  if (vars_out != NULL) *vars_out = vars;
 
-  return program != 0;
+  return vars.program != 0;
 }
