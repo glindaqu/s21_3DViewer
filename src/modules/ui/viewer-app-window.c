@@ -4,13 +4,12 @@
 
 #include "../../include/matrix_calc.h"
 #include "../../include/parser.h"
-#include "viewer-app-settings.h"
-#include "viewer-glfuncs.h"
+#include "viewer-screenshots.h"
 #include "viewer-glarea.h"
-#include "viewer-setLabel.h"
 #include "viewer-openFile.h"
 #include "viewer-modelMovement.h"
 #include "viewer-settings.h"
+#include "viewer-gif.h"
 
 G_DEFINE_TYPE(ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -20,6 +19,7 @@ static void viewer_app_window_dispose(GObject *object) {
   g_clear_object(&win->settings);
 
   win = VIEWER_APP_WINDOW(object);
+
   if (win->mvp_matrix) {
     free(win->mvp_matrix);
     win->mvp_matrix = NULL;
@@ -161,6 +161,9 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   self->mvp_matrix = calloc(1, sizeof(gl_matrix));
   initParser(self->obj_file);
   init_mvp_matrix(self->mvp_matrix);
+  self->recording = FALSE;
+  self->frame_counter = 0;
+  self->gif = NULL;
 
   memset(&self->matrix_movement, 0, sizeof(mvp_matrix_movement_t));
 
@@ -184,6 +187,10 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   viewer_app_window_add_settings(self);
 
   viewer_app_window_load_settings(self);
+
+  viewer_app_window_add_save_actions(self);
+
+  viewer_app_window_add_save_record_actions(self);
 
   viewer_app_window_add_gesture_action(self);
 

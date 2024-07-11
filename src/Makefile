@@ -1,11 +1,12 @@
 CC?=gcc
 GCC_FLAGS = -Wall -Werror -Wextra -Wno-unused-function -g
 CHECK_FLAGS = $(shell pkg-config --cflags check) $(shell pkg-config --libs check)
-GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4)
+GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4 cgif)
 UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-openFile.o \
 modules/ui/viewer-glarea.o modules/ui/viewer-setLabel.o modules/ui/viewer-app-window.o \
 modules/ui/viewer-error.o modules/ui/viewer-glfuncs.o modules/ui/viewer-app-settings.o \
-modules/ui/viewer-modelMovement.o modules/ui/viewer-settings.o
+modules/ui/viewer-modelMovement.o modules/ui/viewer-settings.o modules/ui/viewer-screenshots.o \
+modules/ui/viewer-gif.o
 PREFIX ?= /usr/local
 BINDIR = $(PREFIX)/bin
 SHAREDIR = $(PREFIX)/share

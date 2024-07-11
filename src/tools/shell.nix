@@ -15,5 +15,6 @@ stdenv.mkDerivation {
     valgrind
     python3
     cglm
+    cgif
   ];
 }

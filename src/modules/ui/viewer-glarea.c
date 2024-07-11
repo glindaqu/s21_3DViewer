@@ -1,6 +1,7 @@
 #include "viewer-glarea.h"
 
 #include "viewer-glfuncs.h"
+#include "viewer-gif.h"
 
 void gl_init(ViewerAppWindow *self) {
   gtk_gl_area_make_current (GTK_GL_AREA(self->gl_drawing_area));
@@ -98,6 +99,17 @@ gboolean gl_draw(ViewerAppWindow *self) {
   gl_model_draw(self);
 
   glFlush();
+
+  if (self->recording) {
+    
+    GtkWidget *gl_area = GTK_WIDGET(self->gl_drawing_area);
+    int width = gtk_widget_get_width(gl_area);
+    int height = gtk_widget_get_height(gl_area);
+    
+    uint8_t* rgba_data = capture_frame_from_opengl(width, height);
+    add_frame_to_gif(self, rgba_data, width, height);
+    free(rgba_data);
+  }
 
   return TRUE;
 }

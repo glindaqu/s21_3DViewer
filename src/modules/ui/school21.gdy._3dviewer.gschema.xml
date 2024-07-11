@@ -32,7 +32,7 @@
 
     <!-- Настройки цвета точек -->
     <key name="point-color" type="(iiii)">
-      <default>(0,0,0,1)</default>
+      <default>(1,1,1,1)</default>
       <summary>Points color</summary>
       <description>The color of the points.</description>
     </key>
@@ -57,7 +57,7 @@
 
     <!-- Настройки цвета ребер -->
     <key name="edge-color" type="(iiii)">
-      <default>(0,0,0,1)</default>
+      <default>(1,1,1,1)</default>
       <summary>Edges color</summary>
       <description>The color of the edges.</description>
     </key>

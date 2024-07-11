@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 #include <cglm/cglm.h>
-
+#include <cgif.h>
 
 #include "viewer-app.h"
 #include "../../include/matrix_calc.h"
@@ -33,6 +33,11 @@ struct _ViewerAppWindow {
 
   mat4 projection_matrix;
   gl_matrix *mvp_matrix;
+
+  // Gif record
+  gboolean recording;
+  guint frame_counter;
+  CGIF *gif;
 
   GtkWidget *gl_drawing_area;
 
