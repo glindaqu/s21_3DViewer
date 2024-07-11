@@ -14,7 +14,11 @@ void set_orthographic_projection(float left, float right, float bottom,
 void set_perspective_projection(float left, float right, float bottom,
                                 float top, float near, float far);
 
-void set_edge_thickness(float thickness);
+void apply_point_size_setting(ViewerAppWindow *self);
+
+void apply_point_type_setting(ViewerAppWindow *self);
+
+void set_edge_thickness(ViewerAppWindow* self, float thickness);
 
 void set_edge_strippled(ViewerAppWindow *self);
 

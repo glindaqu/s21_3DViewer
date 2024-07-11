@@ -44,6 +44,10 @@ struct _ViewerAppWindow {
   GLbuffers_t gl_buffers;
   GLshader_vars_t shader_vars;
 
+  /* Settings */
+  gint point_type;
+  gfloat point_size;
+  gfloat edge_thickness; 
   gfloat edge_color[3];
   GdkRGBA background_color;
 

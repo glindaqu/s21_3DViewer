@@ -24,11 +24,9 @@ void set_perspective_projection(float left, float right, float bottom,
   // glMatrixMode(GL_MODELVIEW);
 }
 
-void set_edge_thickness(float thickness) {
-  GLfloat lineWidthRange[2] = {0.0f, 0.0f};
-  glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
-  g_print("Setting edge thickness to %f\n", thickness);
-  glLineWidth(thickness / 10.f);
+void set_edge_thickness(ViewerAppWindow* self, float thickness) {
+//   glLineWidth(thickness);
+    self->edge_thickness = thickness;
 }
 
 void set_edge_strippled(ViewerAppWindow *self) {
@@ -61,7 +59,7 @@ void apply_edge_type_setting(ViewerAppWindow *self) {
 
 
 void apply_edge_thickness_setting(ViewerAppWindow *self) {
-  set_edge_thickness(g_settings_get_int(self->settings, "edge-thickness"));
+  set_edge_thickness(self, g_settings_get_int(self->settings, "edge-thickness"));
 }
 
 void apply_edge_color_setting(ViewerAppWindow *self) {
@@ -76,10 +74,36 @@ void apply_background_color_setting(ViewerAppWindow *self) {
   g_variant_unref(color_variant);
 }
 
+void apply_point_size_setting(ViewerAppWindow *self) {
+  self->point_size = g_settings_get_int(self->settings, "point-size");
+}
+
+void apply_point_type_setting(ViewerAppWindow *self) {
+  const gchar *point_type = g_settings_get_string(self->settings, "point-type");
+  if (g_strcmp0(point_type, "None") == 0) {
+    self->point_type = 0;
+  } else if (g_strcmp0(point_type, "Circle") == 0) {
+    self->point_type = 1;
+  }
+  else if (g_strcmp0(point_type, "Square") == 0) {
+    self->point_type = 2;
+  }
+}
+
 void on_settings_changed(GSettings *settings, gchar *key,
                                 ViewerAppWindow *self) {
   if (g_strcmp0(key, "projection-type") == 0) {
     apply_projection_type_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "point-size") == 0) {
+    apply_point_size_setting(self);
+    gtk_widget_queue_draw(self->gl_drawing_area);
+  }
+
+  if (g_strcmp0(key, "point-type") == 0) {
+    apply_point_type_setting(self);
     gtk_widget_queue_draw(self->gl_drawing_area);
   }
 
@@ -97,6 +121,7 @@ void on_settings_changed(GSettings *settings, gchar *key,
     apply_edge_color_setting(self);
     gtk_widget_queue_draw(self->gl_drawing_area);
   }
+
 
   if (g_strcmp0(key, "background-color") == 0) {
     apply_background_color_setting(self);

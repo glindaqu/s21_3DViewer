@@ -12,9 +12,16 @@ void gl_init(ViewerAppWindow *self) {
     g_error_free(error);
     return;
   }
-  // glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
   glDepthFunc(GL_LESS);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glEnable(GL_DEPTH_TEST);
+
+
+  glEnable(GL_PROGRAM_POINT_SIZE);
+  
+  glEnable(GL_LINE_SMOOTH);
 
   init_buffers(self->obj_file, 0, 0, &self->gl_buffers);
 
@@ -38,9 +45,6 @@ void gl_fini(ViewerAppWindow *self) {
 void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(self->shader_vars.program);
 
-  // glEnable(GL_LINE_STIPPLE);
-  // glLineStipple(1, 0x0F0F);
-
   glUniform3fv(self->shader_vars.loc_lineColor, 1, self->edge_color);
   glUniform1ui(self->shader_vars.loc_pattern, self->pattern);
   glUniform1f(self->shader_vars.loc_factor, self->factor);
@@ -51,12 +55,21 @@ void gl_model_draw(ViewerAppWindow *self) {
                      
   glBindVertexArray(self->gl_buffers.vao);
 
+  glLineWidth(self->edge_thickness); 
   glDrawElements(GL_LINES, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
                  0);
-  glPointSize(10.f);
-  glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
-                 0);
 
+  if (self->point_type == 1) {
+  glUseProgram(self->shader_vars.point_program);
+  
+  glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
+                     &self->mvp_matrix->mvp[0]);
+  }
+  if (self->point_type == 2 || self->point_type == 1) {
+    glPointSize(self->point_size);
+    glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
+                  0);
+  }
   glBindVertexArray(0);
   glUseProgram(0);
 }

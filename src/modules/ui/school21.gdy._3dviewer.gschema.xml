@@ -11,6 +11,25 @@
       <description>The type of projection to use (parallel or central).</description>
     </key>
 
+    <!-- Настройки точек -->
+    <key name="point-type" type="s">
+      <choices>
+        <choice value ="None"/>
+        <choice value ="Circle"/>
+        <choice value ="Square"/>
+      </choices>
+      <default>'None'</default>
+      <summary>Type of points</summary>
+      <description>The type of points to display (none, circle or square).</description>
+    </key>
+
+    <!-- Настройки точек -->
+    <key name="point-size" type="i">
+      <default>1</default>
+      <summary>Point size</summary>
+      <description>The size of the points.</description>
+    </key>
+
     <!-- Настройки ребер -->
     <key name="edge-type" type="s">
       <choices>
@@ -20,6 +39,13 @@
       <default>'Solid'</default>
       <summary>Type of edges</summary>
       <description>The type of edges to display (solid or dashed).</description>
+    </key>
+
+    <!-- Настройки толщины линий -->
+    <key name="edge-thickness" type="i">
+      <default>1</default>
+      <summary>Edge thickness</summary>
+      <description>The thickness of the edges.</description>
     </key>
 
     <!-- Настройки цвета ребер -->

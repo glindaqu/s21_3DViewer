@@ -20,5 +20,6 @@ void main()
     uint bit = uint(round(dist / u_factor)) & 15U;
     if ((u_pattern & (1U<<bit)) == 0U)
         discard; 
+
     fragColor = vec4(vColor, 1.0);
 }

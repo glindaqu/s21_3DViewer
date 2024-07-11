@@ -15,12 +15,13 @@ typedef struct GLbuffers_t{
 
 typedef struct GLshader_vars_t{
   GLuint program;
+  GLuint point_program;
   GLuint mvp_location;
   GLuint loc_res;
   GLuint loc_factor;
   GLuint loc_pattern;
   GLuint loc_lineColor;
-  GLuint rojection_location;
+  GLuint projection_location;
   GLuint color_location;
 } GLshader_vars_t;
 

@@ -111,10 +111,12 @@ static void viewer_app_window_load_ui(ViewerAppWindow* self)
 
 static void viewer_app_window_load_settings(ViewerAppWindow* self) {
   apply_projection_type_setting(self);
+  apply_point_size_setting(self);
+  apply_point_type_setting(self);
   apply_edge_type_setting(self);
+  apply_edge_thickness_setting(self);
   apply_edge_color_setting(self);
   apply_background_color_setting(self);
-  // apply_edge_thickness_setting(self);
 }
 
 static void viewer_app_window_add_gesture_action(ViewerAppWindow* self) {
