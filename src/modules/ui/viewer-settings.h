@@ -8,15 +8,16 @@
 void open_settings_dialog(GAction *action, GVariant *parameter,
                                  ViewerAppWindow *self);
 
-void set_orthographic_projection(float left, float right, float bottom,
-                                 float top, float near, float far);
+void set_perspective_projection(ViewerAppWindow* self, float fovy, float aspect, float nearZ, float farZ);
 
-void set_perspective_projection(float left, float right, float bottom,
-                                float top, float near, float far);
+void set_ortho_projection(ViewerAppWindow* self, float left, float right, float bottom,
+                                float top, float nearZ, float farZ);
 
 void apply_point_size_setting(ViewerAppWindow *self);
 
 void apply_point_type_setting(ViewerAppWindow *self);
+
+void apply_point_color_setting(ViewerAppWindow *self);
 
 void set_edge_thickness(ViewerAppWindow* self, float thickness);
 

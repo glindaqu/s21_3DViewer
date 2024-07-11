@@ -2,6 +2,8 @@
 #define _3DVIEWER_APP_WINDOW_H
 
 #include <gtk/gtk.h>
+#include <cglm/cglm.h>
+
 
 #include "viewer-app.h"
 #include "../../include/matrix_calc.h"
@@ -29,6 +31,7 @@ struct _ViewerAppWindow {
 
   ObjFile_t *obj_file;
 
+  mat4 projection_matrix;
   gl_matrix *mvp_matrix;
 
   GtkWidget *gl_drawing_area;
@@ -49,6 +52,7 @@ struct _ViewerAppWindow {
   gfloat point_size;
   gfloat edge_thickness; 
   gfloat edge_color[3];
+  gfloat point_color[3];
   GdkRGBA background_color;
 
   GLushort pattern;

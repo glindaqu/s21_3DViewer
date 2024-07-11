@@ -113,6 +113,7 @@ static void viewer_app_window_load_settings(ViewerAppWindow* self) {
   apply_projection_type_setting(self);
   apply_point_size_setting(self);
   apply_point_type_setting(self);
+  apply_point_color_setting(self);
   apply_edge_type_setting(self);
   apply_edge_thickness_setting(self);
   apply_edge_color_setting(self);

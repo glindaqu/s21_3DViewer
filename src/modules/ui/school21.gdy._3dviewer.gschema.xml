@@ -30,6 +30,13 @@
       <description>The size of the points.</description>
     </key>
 
+    <!-- Настройки цвета точек -->
+    <key name="point-color" type="(iiii)">
+      <default>(0,0,0,1)</default>
+      <summary>Points color</summary>
+      <description>The color of the points.</description>
+    </key>
+
     <!-- Настройки ребер -->
     <key name="edge-type" type="s">
       <choices>
@@ -51,15 +58,8 @@
     <!-- Настройки цвета ребер -->
     <key name="edge-color" type="(iiii)">
       <default>(0,0,0,1)</default>
-      <summary>Background color</summary>
+      <summary>Edges color</summary>
       <description>The color of the edges.</description>
-    </key>
-
-    <!-- Настройки цвета точек -->
-    <key name="point-color" type="(iiii)">
-      <default>(0,0,0,1)</default>
-      <summary>Background color</summary>
-      <description>The color of the vertices.</description>
     </key>
 
     <!-- Настройки цвета фона -->

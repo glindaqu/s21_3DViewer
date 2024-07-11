@@ -42,34 +42,51 @@ void gl_fini(ViewerAppWindow *self) {
   glDelProgram(&self->shader_vars.program);
 }
 
-void gl_model_draw(ViewerAppWindow *self) {
+void gl_draw_lines(ViewerAppWindow *self) {
   glUseProgram(self->shader_vars.program);
+
+  self->shader_vars.loc_lineColor = glGetUniformLocation(self->shader_vars.program, "lineColor");
 
   glUniform3fv(self->shader_vars.loc_lineColor, 1, self->edge_color);
   glUniform1ui(self->shader_vars.loc_pattern, self->pattern);
   glUniform1f(self->shader_vars.loc_factor, self->factor);
   glUniform2f(self->shader_vars.loc_res, 800.f, 800.f);
   
+  glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE, &self->projection_matrix[0][0]);
   glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
                      &self->mvp_matrix->mvp[0]);
-                     
+  
   glBindVertexArray(self->gl_buffers.vao);
 
   glLineWidth(self->edge_thickness); 
   glDrawElements(GL_LINES, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
                  0);
+}
 
+void gl_draw_points(ViewerAppWindow *self) {
   if (self->point_type == 1) {
   glUseProgram(self->shader_vars.point_program);
-  
+
+  self->shader_vars.loc_lineColor = glGetUniformLocation(self->shader_vars.point_program, "lineColor");
   glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
                      &self->mvp_matrix->mvp[0]);
+  glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE, &self->projection_matrix[0][0]);
+
   }
   if (self->point_type == 2 || self->point_type == 1) {
+    glUniform3fv(self->shader_vars.loc_lineColor, 1, self->point_color);
     glPointSize(self->point_size);
     glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
                   0);
   }
+}
+
+void gl_model_draw(ViewerAppWindow *self) {
+
+  gl_draw_lines(self);
+
+  gl_draw_points(self);
+
   glBindVertexArray(0);
   glUseProgram(0);
 }

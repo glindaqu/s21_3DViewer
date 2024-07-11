@@ -174,6 +174,7 @@ gboolean init_shaders(GLshader_vars_t *vars_out,
   vars.loc_pattern = glGetUniformLocation(vars.program, "u_pattern");
   vars.loc_factor  = glGetUniformLocation(vars.program, "u_factor");
   vars.loc_lineColor = glGetUniformLocation(vars.program, "lineColor");
+  vars.projection_location = glGetUniformLocation(vars.program, "projection_matrix");
 
   glDetachShader(vars.point_program, vertex);
   glDetachShader(vars.point_program, point);

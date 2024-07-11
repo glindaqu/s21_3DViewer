@@ -139,6 +139,7 @@ static void viewer_app_settings_init(ViewerAppSettings *self) {
                                  point_type_to_pos, pos_to_point_type, NULL, NULL);
     g_settings_bind_with_mapping(self->settings, "background-color", self->background_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
     g_settings_bind_with_mapping(self->settings, "edge-color", self->edge_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
+    g_settings_bind_with_mapping(self->settings, "point-color", self->point_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
     g_settings_bind(self->settings, "edge-thickness", self->edge_thickness_spin, "value", G_SETTINGS_BIND_DEFAULT);
     g_settings_bind(self->settings, "point-size", self->point_size, "value", G_SETTINGS_BIND_DEFAULT);
 }
@@ -167,6 +168,7 @@ static void viewer_app_settings_class_init(ViewerAppSettingsClass *klass) {
                                          ViewerAppSettings, edge_type);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_size);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_type);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_color);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, edge_color);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, background_color);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, edge_thickness_spin);
