@@ -1,7 +1,7 @@
 #include "../../include/viewer-modelMovement.h"
 
-void gl_button_press_event(GtkGestureClick *gesture, int n_press, double x,
-                           double y, ViewerAppWindow *self) {
+void gl_button_press_event(GtkGestureClick *gesture, UNUSED int n_press,
+                           double x, double y, ViewerAppWindow *self) {
   if (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) ==
       GDK_BUTTON_PRIMARY) {
     self->mouse_dragging = TRUE;
@@ -10,16 +10,17 @@ void gl_button_press_event(GtkGestureClick *gesture, int n_press, double x,
   }
 }
 
-void gl_button_release_event(GtkGestureClick *gesture, int n_press, double x,
-                             double y, ViewerAppWindow *self) {
+void gl_button_release_event(GtkGestureClick *gesture, UNUSED int n_press,
+                             UNUSED double x, UNUSED double y,
+                             ViewerAppWindow *self) {
   if (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) ==
       GDK_BUTTON_PRIMARY) {
     self->mouse_dragging = FALSE;
   }
 }
 
-void gl_motion_notify_event(GtkEventControllerMotion *controller, double x,
-                            double y, ViewerAppWindow *self) {
+void gl_motion_notify_event(UNUSED GtkEventControllerMotion *controller,
+                            double x, double y, ViewerAppWindow *self) {
   if (self->mouse_dragging) {
     double dx = x - self->last_mouse_x;
     double dy = y - self->last_mouse_y;
@@ -63,7 +64,7 @@ void gl_scroll_event(GtkEventControllerScroll *controller, double dx, double dy,
   }
 }
 
-void on_scale_value_changed(GtkRange *range, ViewerAppWindow *self) {
+void on_scale_value_changed(UNUSED GtkRange *range, ViewerAppWindow *self) {
   self->matrix_movement.translation_vector[X_AXIS] =
       gtk_range_get_value(GTK_RANGE(self->x_scale));
   self->matrix_movement.translation_vector[Y_AXIS] =

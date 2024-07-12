@@ -40,7 +40,8 @@ static void save_bmp_callback(GtkFileDialog *dialog, GAsyncResult *result,
   }
 }
 
-static void on_save_bmp_activate(GSimpleAction *action, GVariant *parameter,
+static void on_save_bmp_activate(UNUSED GSimpleAction *action,
+                                 UNUSED GVariant *parameter,
                                  gpointer user_data) {
   ViewerAppWindow *self = VIEWER_APP_WINDOW(user_data);
   GtkFileDialog *dialog = gtk_file_dialog_new();
@@ -95,7 +96,8 @@ static void save_jpeg_callback(GtkFileDialog *dialog, GAsyncResult *result,
   }
 }
 
-static void on_save_jpeg_activate(GSimpleAction *action, GVariant *parameter,
+static void on_save_jpeg_activate(UNUSED GSimpleAction *action,
+                                  UNUSED GVariant *parameter,
                                   gpointer user_data) {
   ViewerAppWindow *self = VIEWER_APP_WINDOW(user_data);
   GtkFileDialog *dialog = gtk_file_dialog_new();

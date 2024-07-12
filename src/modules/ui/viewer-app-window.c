@@ -13,8 +13,7 @@
 
 G_DEFINE_TYPE(ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
-static void show_about_dialog(GSimpleAction *action, GVariant *parameter,
-                              gpointer user_data) {
+static void show_about_dialog(UNUSED GVariant *parameter, gpointer user_data) {
   ViewerAppWindow *self = VIEWER_APP_WINDOW(user_data);
   GtkWidget *dialog = gtk_about_dialog_new();
 
@@ -60,24 +59,26 @@ static void show_about_dialog(GSimpleAction *action, GVariant *parameter,
 static void viewer_app_window_dispose(GObject *object) {
   ViewerAppWindow *win = VIEWER_APP_WINDOW(object);
 
-  g_clear_object(&win->settings);
+  g_print("Disposing ViewerAppWindow\n");
 
-  win = VIEWER_APP_WINDOW(object);
+  g_clear_object(&win->settings);
 
   free_frame_buffer();
 
   if (win->mvp_matrix) {
+    g_print("Freeing mvp_matrix\n");
     free(win->mvp_matrix);
     win->mvp_matrix = NULL;
   }
 
   if (win->obj_file) {
+    g_print("Removing and freeing obj_file\n");
     removeObjFile(win->obj_file);
     free(win->obj_file);
     win->obj_file = NULL;
   }
 
-  G_OBJECT_CLASS(win)->dispose(object);
+  G_OBJECT_CLASS(viewer_app_window_parent_class)->dispose(object);
 }
 
 static void viewer_app_window_add_childs(GtkWidgetClass *widget_class) {

@@ -62,7 +62,8 @@ void on_open_response(GObject *source, GAsyncResult *result,
   if (file != NULL) open_file(self, file);
 }
 
-void viewer_app_window__open_file_dialog(GAction *action, GVariant *parameter,
+void viewer_app_window__open_file_dialog(UNUSED GAction *action,
+                                         UNUSED GVariant *parameter,
                                          ViewerAppWindow *self) {
   g_autoptr(GtkFileDialog) dialog = gtk_file_dialog_new();
 

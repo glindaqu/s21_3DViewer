@@ -172,7 +172,8 @@ static void save_gif_callback(GtkFileDialog* dialog, GAsyncResult* result,
   }
 }
 
-static void on_save_gif_activate(GSimpleAction* action, GVariant* parameter,
+static void on_save_gif_activate(UNUSED GSimpleAction* action,
+                                 UNUSED GVariant* parameter,
                                  gpointer user_data) {
   ViewerAppWindow* self = VIEWER_APP_WINDOW(user_data);
   GtkFileDialog* dialog = gtk_file_dialog_new();

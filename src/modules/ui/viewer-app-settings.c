@@ -20,7 +20,7 @@ struct _ViewerAppSettings {
 G_DEFINE_TYPE(ViewerAppSettings, viewer_app_settings, GTK_TYPE_DIALOG)
 
 static gboolean point_type_to_pos(GValue *value, GVariant *variant,
-                                  gpointer user_data) {
+                                  UNUSED gpointer user_data) {
   const char *s = g_variant_get_string(variant, NULL);
   if (strcmp(s, "None") == 0)
     g_value_set_uint(value, 0);
@@ -33,8 +33,8 @@ static gboolean point_type_to_pos(GValue *value, GVariant *variant,
 }
 
 static GVariant *pos_to_point_type(const GValue *value,
-                                   const GVariantType *expected_type,
-                                   gpointer user_data) {
+                                   UNUSED const GVariantType *expected_type,
+                                   UNUSED gpointer user_data) {
   switch (g_value_get_uint(value)) {
     case 0:
       return g_variant_new_string("None");
@@ -48,7 +48,7 @@ static GVariant *pos_to_point_type(const GValue *value,
 }
 
 static gboolean rgba_to_gvalue(GValue *value, GVariant *variant,
-                               gpointer user_data) {
+                               UNUSED gpointer user_data) {
   gint rgba[4];
   g_variant_get(variant, "(iiii)", &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
   rgba[0] /= 255.f;
@@ -59,14 +59,14 @@ static gboolean rgba_to_gvalue(GValue *value, GVariant *variant,
 }
 
 static GVariant *gvalue_to_rgba(const GValue *value,
-                                const GVariantType *expected_type,
-                                gpointer user_data) {
+                                UNUSED const GVariantType *expected_type,
+                                UNUSED gpointer user_data) {
   gint *rgba = g_value_get_boxed(value);
   return g_variant_new("(iiii)", rgba[0], rgba[1], rgba[2], rgba[3]);
 }
 
 static gboolean projection_to_pos(GValue *value, GVariant *variant,
-                                  gpointer user_data) {
+                                  UNUSED gpointer user_data) {
   const char *s = g_variant_get_string(variant, NULL);
   if (strcmp(s, "Parallel") == 0)
     g_value_set_uint(value, 0);
@@ -77,8 +77,8 @@ static gboolean projection_to_pos(GValue *value, GVariant *variant,
 }
 
 static GVariant *pos_to_projection(const GValue *value,
-                                   const GVariantType *expected_type,
-                                   gpointer user_data) {
+                                   UNUSED const GVariantType *expected_type,
+                                   UNUSED gpointer user_data) {
   switch (g_value_get_uint(value)) {
     case 0:
       return g_variant_new_string("Parallel");
@@ -90,7 +90,7 @@ static GVariant *pos_to_projection(const GValue *value,
 }
 
 static gboolean edge_type_to_pos(GValue *value, GVariant *variant,
-                                 gpointer user_data) {
+                                 UNUSED gpointer user_data) {
   const char *s = g_variant_get_string(variant, NULL);
   if (strcmp(s, "Solid") == 0)
     g_value_set_uint(value, 0);
@@ -101,8 +101,8 @@ static gboolean edge_type_to_pos(GValue *value, GVariant *variant,
 }
 
 static GVariant *pos_to_edge_type(const GValue *value,
-                                  const GVariantType *expected_type,
-                                  gpointer user_data) {
+                                  UNUSED const GVariantType *expected_type,
+                                  UNUSED gpointer user_data) {
   switch (g_value_get_uint(value)) {
     case 0:
       return g_variant_new_string("Solid");
@@ -144,9 +144,9 @@ static void viewer_app_settings_init(ViewerAppSettings *self) {
 }
 
 static void viewer_app_settings_dispose(GObject *object) {
-  ViewerAppSettings *settings;
+  ViewerAppSettings *settings = VIEWER_APP_SETTINGS(object);
 
-  settings = VIEWER_APP_SETTINGS(object);
+  g_print("Disposing ViewerAppSettings\n");
 
   g_clear_object(&settings->settings);
 

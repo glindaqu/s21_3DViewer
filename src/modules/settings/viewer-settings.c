@@ -4,7 +4,7 @@
 
 #include "../../include/viewer-app-settings.h"
 
-void open_settings_dialog(GAction *action, GVariant *parameter,
+void open_settings_dialog(UNUSED GAction *action, UNUSED GVariant *parameter,
                           ViewerAppWindow *self) {
   g_print("Opening settings dialog\n");
   ViewerAppSettings *settings_dialog = viewer_app_settings_new(self);
@@ -107,7 +107,7 @@ void apply_point_type_setting(ViewerAppWindow *self) {
   }
 }
 
-void on_settings_changed(GSettings *settings, gchar *key,
+void on_settings_changed(UNUSED GSettings *settings, gchar *key,
                          ViewerAppWindow *self) {
   if (g_strcmp0(key, "projection-type") == 0) {
     apply_projection_type_setting(self);
