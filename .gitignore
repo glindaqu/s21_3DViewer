@@ -4,6 +4,7 @@
 #gcov
 *.gcda
 *.gcno
+*.info
 
 #gtk
 resources.c
