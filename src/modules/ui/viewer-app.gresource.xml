@@ -7,7 +7,6 @@
     <file>glarea-fragment.glsl</file>
     <file>glarea-point.glsl</file>
     <file>window-style.css</file>
-    <file>appsettings-style.css</file>
     <file>glarea-vertex.glsl</file>
   </gresource>
 </gresources>

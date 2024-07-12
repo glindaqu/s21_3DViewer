@@ -114,18 +114,7 @@ static GVariant *pos_to_edge_type(const GValue *value,
 
 static void viewer_app_settings_init(ViewerAppSettings *self) {
     gtk_widget_init_template(GTK_WIDGET(self));
-
-    const char cssPath[] =
-        "/src/modules/ui/school21/gdy/_3dviewer/appsettings-style.css";
-    GtkCssProvider *cssProvider = gtk_css_provider_new();
-    gtk_css_provider_load_from_resource(cssProvider, cssPath);
-    gtk_style_context_add_provider_for_display(gdk_display_get_default(),
-                                               GTK_STYLE_PROVIDER(cssProvider),
-                                               GTK_STYLE_PROVIDER_PRIORITY_USER);
-
     self->settings = g_settings_new("school21.gdy._3dviewer");
-
-    g_object_unref(cssProvider);
 
     g_settings_bind_with_mapping(self->settings, "projection-type",
                                  self->projection, "selected",
