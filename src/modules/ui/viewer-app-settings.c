@@ -38,7 +38,7 @@ static GVariant *pos_to_point_type(const GValue *value,
   switch (g_value_get_uint(value)) {
     case 0:
       return g_variant_new_string("None");
-    case 1: 
+    case 1:
       return g_variant_new_string("Circle");
     case 2:
       return g_variant_new_string("Square");
@@ -47,22 +47,23 @@ static GVariant *pos_to_point_type(const GValue *value,
   }
 }
 
-
-static gboolean rgba_to_gvalue(GValue *value, GVariant *variant, gpointer user_data) {
-    gint rgba[4];
-    g_variant_get(variant, "(iiii)", &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
-    rgba[0] /= 255.f;
-    rgba[1] /= 255.f;
-    rgba[2] /= 255.f; 
-    g_value_set_boxed(value, rgba);
-    return TRUE;
+static gboolean rgba_to_gvalue(GValue *value, GVariant *variant,
+                               gpointer user_data) {
+  gint rgba[4];
+  g_variant_get(variant, "(iiii)", &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
+  rgba[0] /= 255.f;
+  rgba[1] /= 255.f;
+  rgba[2] /= 255.f;
+  g_value_set_boxed(value, rgba);
+  return TRUE;
 }
 
-static GVariant *gvalue_to_rgba(const GValue *value, const GVariantType *expected_type, gpointer user_data) {
-    gint *rgba = g_value_get_boxed(value);
-    return g_variant_new("(iiii)", rgba[0], rgba[1], rgba[2], rgba[3]);
+static GVariant *gvalue_to_rgba(const GValue *value,
+                                const GVariantType *expected_type,
+                                gpointer user_data) {
+  gint *rgba = g_value_get_boxed(value);
+  return g_variant_new("(iiii)", rgba[0], rgba[1], rgba[2], rgba[3]);
 }
-
 
 static gboolean projection_to_pos(GValue *value, GVariant *variant,
                                   gpointer user_data) {
@@ -113,24 +114,33 @@ static GVariant *pos_to_edge_type(const GValue *value,
 }
 
 static void viewer_app_settings_init(ViewerAppSettings *self) {
-    gtk_widget_init_template(GTK_WIDGET(self));
-    self->settings = g_settings_new("school21.gdy._3dviewer");
+  gtk_widget_init_template(GTK_WIDGET(self));
+  self->settings = g_settings_new("school21.gdy._3dviewer");
 
-    g_settings_bind_with_mapping(self->settings, "projection-type",
-                                 self->projection, "selected",
-                                 G_SETTINGS_BIND_DEFAULT, projection_to_pos,
-                                 pos_to_projection, NULL, NULL);
-    g_settings_bind_with_mapping(self->settings, "edge-type", self->edge_type,
-                                 "selected", G_SETTINGS_BIND_DEFAULT,
-                                 edge_type_to_pos, pos_to_edge_type, NULL, NULL);
-    g_settings_bind_with_mapping(self->settings, "point-type", self->point_type,
-                                 "selected", G_SETTINGS_BIND_DEFAULT,
-                                 point_type_to_pos, pos_to_point_type, NULL, NULL);
-    g_settings_bind_with_mapping(self->settings, "background-color", self->background_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
-    g_settings_bind_with_mapping(self->settings, "edge-color", self->edge_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
-    g_settings_bind_with_mapping(self->settings, "point-color", self->point_color, "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
-    g_settings_bind(self->settings, "edge-thickness", self->edge_thickness_spin, "value", G_SETTINGS_BIND_DEFAULT);
-    g_settings_bind(self->settings, "point-size", self->point_size, "value", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind_with_mapping(self->settings, "projection-type",
+                               self->projection, "selected",
+                               G_SETTINGS_BIND_DEFAULT, projection_to_pos,
+                               pos_to_projection, NULL, NULL);
+  g_settings_bind_with_mapping(self->settings, "edge-type", self->edge_type,
+                               "selected", G_SETTINGS_BIND_DEFAULT,
+                               edge_type_to_pos, pos_to_edge_type, NULL, NULL);
+  g_settings_bind_with_mapping(self->settings, "point-type", self->point_type,
+                               "selected", G_SETTINGS_BIND_DEFAULT,
+                               point_type_to_pos, pos_to_point_type, NULL,
+                               NULL);
+  g_settings_bind_with_mapping(
+      self->settings, "background-color", self->background_color, "rgba",
+      G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue, gvalue_to_rgba, NULL, NULL);
+  g_settings_bind_with_mapping(self->settings, "edge-color", self->edge_color,
+                               "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue,
+                               gvalue_to_rgba, NULL, NULL);
+  g_settings_bind_with_mapping(self->settings, "point-color", self->point_color,
+                               "rgba", G_SETTINGS_BIND_DEFAULT, rgba_to_gvalue,
+                               gvalue_to_rgba, NULL, NULL);
+  g_settings_bind(self->settings, "edge-thickness", self->edge_thickness_spin,
+                  "value", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind(self->settings, "point-size", self->point_size, "value",
+                  G_SETTINGS_BIND_DEFAULT);
 }
 
 static void viewer_app_settings_dispose(GObject *object) {
@@ -144,23 +154,29 @@ static void viewer_app_settings_dispose(GObject *object) {
 }
 
 static void viewer_app_settings_class_init(ViewerAppSettingsClass *klass) {
-    G_OBJECT_CLASS(klass)->dispose = viewer_app_settings_dispose;
+  G_OBJECT_CLASS(klass)->dispose = viewer_app_settings_dispose;
 
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(klass),
-        "/src/modules/ui/school21/gdy/_3dviewer/"
-        "viewer-app-settings.ui");
+  gtk_widget_class_set_template_from_resource(
+      GTK_WIDGET_CLASS(klass),
+      "/src/modules/ui/school21/gdy/_3dviewer/"
+      "viewer-app-settings.ui");
 
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
-                                         ViewerAppSettings, projection);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
-                                         ViewerAppSettings, edge_type);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_size);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_type);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, point_color);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, edge_color);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, background_color);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass), ViewerAppSettings, edge_thickness_spin);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, projection);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, edge_type);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, point_size);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, point_type);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, point_color);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, edge_color);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, background_color);
+  gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(klass),
+                                       ViewerAppSettings, edge_thickness_spin);
 }
 
 ViewerAppSettings *viewer_app_settings_new(ViewerAppWindow *win) {

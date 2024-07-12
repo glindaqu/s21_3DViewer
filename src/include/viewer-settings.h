@@ -5,7 +5,6 @@
 
 #include "viewer-app-window.h"
 
-
 /**
  * @brief Функция открывает окно настроек приложения.
  *
@@ -15,7 +14,7 @@
  * @param self Указатель на объект ViewerAppWindow.
  */
 void open_settings_dialog(GAction *action, GVariant *parameter,
-                                 ViewerAppWindow *self);
+                          ViewerAppWindow *self);
 /**
  * @brief Задает перспективное преобразование для окна просмотра.
  *
@@ -28,7 +27,8 @@ void open_settings_dialog(GAction *action, GVariant *parameter,
  * @details
  * Функция задает перспективное преобразование для окна просмотра OpenGL.
  */
-void set_perspective_projection(ViewerAppWindow* self, float fovy, float aspect, float nearZ, float farZ);
+void set_perspective_projection(ViewerAppWindow *self, float fovy, float aspect,
+                                float nearZ, float farZ);
 
 /**
  * @brief Задает ортогональное преобразование для окна просмотра.
@@ -46,18 +46,17 @@ void set_perspective_projection(ViewerAppWindow* self, float fovy, float aspect,
  *
  * @see set_perspective_projection
  */
-void set_ortho_projection(ViewerAppWindow* self, float left, float right, float bottom,
-                                float top, float nearZ, float farZ);
+void set_ortho_projection(ViewerAppWindow *self, float left, float right,
+                          float bottom, float top, float nearZ, float farZ);
 /**
-* @brief Обрабатывает изменение настроек размера точек.
-*
-* @param self Указатель на объект ViewerAppWindow.
-*
-* @details
-* Функция обрабатывает изменение настроек размера точек.
-*/
+ * @brief Обрабатывает изменение настроек размера точек.
+ *
+ * @param self Указатель на объект ViewerAppWindow.
+ *
+ * @details
+ * Функция обрабатывает изменение настроек размера точек.
+ */
 void apply_point_size_setting(ViewerAppWindow *self);
-
 
 /**
  * @brief Обрабатывает изменение настроек типа отображения точек.
@@ -88,7 +87,7 @@ void apply_point_color_setting(ViewerAppWindow *self);
  * @details
  * Функция устанавливает толщину границы для окна просмотра.
  */
-void set_edge_thickness(ViewerAppWindow* self, float thickness);
+void set_edge_thickness(ViewerAppWindow *self, float thickness);
 
 /**
  * @brief Устанавливает стиль границы в виде пунктирной линии.
@@ -162,7 +161,7 @@ void apply_edge_thickness_setting(ViewerAppWindow *self);
  * Функция извлекает данные о цвете из варианта и устанавливает их в указанный
  * массив.
  */
-void set_line_color(const GVariant *color_variant, float* lineColor);
+void set_line_color(const GVariant *color_variant, float *lineColor);
 
 /**
  * @brief Обрабатывает изменение настроек цвета границы.
@@ -195,5 +194,5 @@ void apply_background_color_setting(ViewerAppWindow *self);
  * Функция обрабатывает изменение настроек и вызывает рисование.
  */
 void on_settings_changed(GSettings *settings, gchar *key,
-                                ViewerAppWindow *self);
+                         ViewerAppWindow *self);
 #endif  // _VIEWER_SETTINGS_H

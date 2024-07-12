@@ -1,4 +1,5 @@
 #include "../../include/viewer-glfuncs.h"
+
 #include "../../include/viewer-error.h"
 
 void glDelBuffers(GLbuffers_t *buffer) {
@@ -7,7 +8,7 @@ void glDelBuffers(GLbuffers_t *buffer) {
   if (buffer->ebo != 0) glDeleteBuffers(1, &buffer->ebo);
 }
 
-void glDelProgram(GLuint* program) {
+void glDelProgram(GLuint *program) {
   if (*program != 0) glDeleteProgram(*program);
 }
 
@@ -89,102 +90,117 @@ guint create_shader(int shader_type, const char *source, GError **error,
 }
 
 gboolean init_shaders(GLshader_vars_t *vars_out, GError **error) {
-    GBytes *source;
-    GLshader_vars_t vars;
-    guint vertex = 0, fragment = 0, point = 0;
+  GBytes *source;
+  GLshader_vars_t vars;
+  guint vertex = 0, fragment = 0, point = 0;
 
-    source = g_resources_lookup_data("/src/modules/ui/school21/gdy/_3dviewer/glarea-vertex.glsl", 0, NULL);
-    if (!create_shader(GL_VERTEX_SHADER, g_bytes_get_data(source, NULL), error, &vertex)) {
-        g_bytes_unref(source);
-        return FALSE;
-    }
+  source = g_resources_lookup_data(
+      "/src/modules/ui/school21/gdy/_3dviewer/resources/shaders/"
+      "glarea-vertex.glsl",
+      0, NULL);
+  if (!create_shader(GL_VERTEX_SHADER, g_bytes_get_data(source, NULL), error,
+                     &vertex)) {
     g_bytes_unref(source);
+    return FALSE;
+  }
+  g_bytes_unref(source);
 
-    source = g_resources_lookup_data("/src/modules/ui/school21/gdy/_3dviewer/glarea-fragment.glsl", 0, NULL);
-    if (!create_shader(GL_FRAGMENT_SHADER, g_bytes_get_data(source, NULL), error, &fragment)) {
-        g_bytes_unref(source);
-        glDeleteShader(vertex);
-        return FALSE;
-    }
+  source = g_resources_lookup_data(
+      "/src/modules/ui/school21/gdy/_3dviewer/resources/shaders/"
+      "glarea-fragment.glsl",
+      0, NULL);
+  if (!create_shader(GL_FRAGMENT_SHADER, g_bytes_get_data(source, NULL), error,
+                     &fragment)) {
     g_bytes_unref(source);
+    glDeleteShader(vertex);
+    return FALSE;
+  }
+  g_bytes_unref(source);
 
-    source = g_resources_lookup_data("/src/modules/ui/school21/gdy/_3dviewer/glarea-point.glsl", 0, NULL);
-    if (!create_shader(GL_FRAGMENT_SHADER, g_bytes_get_data(source, NULL), error, &point)) {
-        g_bytes_unref(source);
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-        return FALSE;
-    }
+  source = g_resources_lookup_data(
+      "/src/modules/ui/school21/gdy/_3dviewer/resources/shaders/"
+      "glarea-point.glsl",
+      0, NULL);
+  if (!create_shader(GL_FRAGMENT_SHADER, g_bytes_get_data(source, NULL), error,
+                     &point)) {
     g_bytes_unref(source);
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+    return FALSE;
+  }
+  g_bytes_unref(source);
 
-    vars.program = glCreateProgram();
-    vars.point_program = glCreateProgram();
+  vars.program = glCreateProgram();
+  vars.point_program = glCreateProgram();
 
-    glAttachShader(vars.program, vertex);
-    glAttachShader(vars.program, fragment);
-    glLinkProgram(vars.program);
+  glAttachShader(vars.program, vertex);
+  glAttachShader(vars.program, fragment);
+  glLinkProgram(vars.program);
 
-    int status = 0;
-    glGetProgramiv(vars.program, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE) {
-        int log_len = 0;
-        glGetProgramiv(vars.program, GL_INFO_LOG_LENGTH, &log_len);
-        char *buffer = g_malloc(log_len + 1);
-        glGetProgramInfoLog(vars.program, log_len, NULL, buffer);
-        g_set_error(error, VIEWER_ERROR, VIEWER_ERROR_SHADER_LINK, "Linking failure in program: %s", buffer);
-        g_print("Linking failure in program: %s", buffer);
-        g_free(buffer);
-        glDeleteProgram(vars.program);
-        vars.program = 0;
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-        glDeleteShader(point);
-        if (vars_out != NULL) *vars_out = vars;
-        return FALSE;
-    }
-
-    glAttachShader(vars.point_program, vertex);
-    glAttachShader(vars.point_program, point);
-    glLinkProgram(vars.point_program);
-
-    status = 0;
-    glGetProgramiv(vars.point_program, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE) {
-        int log_len = 0;
-        glGetProgramiv(vars.point_program, GL_INFO_LOG_LENGTH, &log_len);
-        char *buffer = g_malloc(log_len + 1);
-        glGetProgramInfoLog(vars.point_program, log_len, NULL, buffer);
-        g_set_error(error, VIEWER_ERROR, VIEWER_ERROR_SHADER_LINK, "Linking failure in program: %s", buffer);
-        g_print("Linking failure in program: %s", buffer);
-        g_free(buffer);
-        glDeleteProgram(vars.point_program);
-        vars.point_program = 0;
-        glDeleteProgram(vars.program);
-        vars.program = 0;
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-        glDeleteShader(point);
-        if (vars_out != NULL) *vars_out = vars;
-        return FALSE;
-    }
-
-    vars.mvp_location = glGetUniformLocation(vars.program, "mvp_matrix");
-    vars.loc_res = glGetUniformLocation(vars.program, "u_resolution");
-    vars.loc_pattern = glGetUniformLocation(vars.program, "u_pattern");
-    vars.loc_factor = glGetUniformLocation(vars.program, "u_factor");
-    vars.loc_lineColor = glGetUniformLocation(vars.program, "lineColor");
-    vars.projection_location = glGetUniformLocation(vars.program, "projection_matrix");
-
-    glDetachShader(vars.point_program, vertex);
-    glDetachShader(vars.point_program, point);
-    glDetachShader(vars.program, vertex);
-    glDetachShader(vars.program, fragment);
-
+  int status = 0;
+  glGetProgramiv(vars.program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE) {
+    int log_len = 0;
+    glGetProgramiv(vars.program, GL_INFO_LOG_LENGTH, &log_len);
+    char *buffer = g_malloc(log_len + 1);
+    glGetProgramInfoLog(vars.program, log_len, NULL, buffer);
+    g_set_error(error, VIEWER_ERROR, VIEWER_ERROR_SHADER_LINK,
+                "Linking failure in program: %s", buffer);
+    g_print("Linking failure in program: %s", buffer);
+    g_free(buffer);
+    glDeleteProgram(vars.program);
+    vars.program = 0;
     glDeleteShader(vertex);
     glDeleteShader(fragment);
     glDeleteShader(point);
-
     if (vars_out != NULL) *vars_out = vars;
+    return FALSE;
+  }
 
-    return vars.program != 0;
+  glAttachShader(vars.point_program, vertex);
+  glAttachShader(vars.point_program, point);
+  glLinkProgram(vars.point_program);
+
+  status = 0;
+  glGetProgramiv(vars.point_program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE) {
+    int log_len = 0;
+    glGetProgramiv(vars.point_program, GL_INFO_LOG_LENGTH, &log_len);
+    char *buffer = g_malloc(log_len + 1);
+    glGetProgramInfoLog(vars.point_program, log_len, NULL, buffer);
+    g_set_error(error, VIEWER_ERROR, VIEWER_ERROR_SHADER_LINK,
+                "Linking failure in program: %s", buffer);
+    g_print("Linking failure in program: %s", buffer);
+    g_free(buffer);
+    glDeleteProgram(vars.point_program);
+    vars.point_program = 0;
+    glDeleteProgram(vars.program);
+    vars.program = 0;
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+    glDeleteShader(point);
+    if (vars_out != NULL) *vars_out = vars;
+    return FALSE;
+  }
+
+  vars.mvp_location = glGetUniformLocation(vars.program, "mvp_matrix");
+  vars.loc_res = glGetUniformLocation(vars.program, "u_resolution");
+  vars.loc_pattern = glGetUniformLocation(vars.program, "u_pattern");
+  vars.loc_factor = glGetUniformLocation(vars.program, "u_factor");
+  vars.loc_lineColor = glGetUniformLocation(vars.program, "lineColor");
+  vars.projection_location =
+      glGetUniformLocation(vars.program, "projection_matrix");
+
+  glDetachShader(vars.point_program, vertex);
+  glDetachShader(vars.point_program, point);
+  glDetachShader(vars.program, vertex);
+  glDetachShader(vars.program, fragment);
+
+  glDeleteShader(vertex);
+  glDeleteShader(fragment);
+  glDeleteShader(point);
+
+  if (vars_out != NULL) *vars_out = vars;
+
+  return vars.program != 0;
 }

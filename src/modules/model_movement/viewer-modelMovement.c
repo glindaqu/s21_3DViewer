@@ -1,7 +1,7 @@
 #include "../../include/viewer-modelMovement.h"
 
-void gl_button_press_event(GtkGestureClick *gesture, int n_press,
-                                  double x, double y, ViewerAppWindow *self) {
+void gl_button_press_event(GtkGestureClick *gesture, int n_press, double x,
+                           double y, ViewerAppWindow *self) {
   if (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) ==
       GDK_BUTTON_PRIMARY) {
     self->mouse_dragging = TRUE;
@@ -10,16 +10,16 @@ void gl_button_press_event(GtkGestureClick *gesture, int n_press,
   }
 }
 
-void gl_button_release_event(GtkGestureClick *gesture, int n_press,
-                                    double x, double y, ViewerAppWindow *self) {
+void gl_button_release_event(GtkGestureClick *gesture, int n_press, double x,
+                             double y, ViewerAppWindow *self) {
   if (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) ==
       GDK_BUTTON_PRIMARY) {
     self->mouse_dragging = FALSE;
   }
 }
 
-void gl_motion_notify_event(GtkEventControllerMotion *controller,
-                                   double x, double y, ViewerAppWindow *self) {
+void gl_motion_notify_event(GtkEventControllerMotion *controller, double x,
+                            double y, ViewerAppWindow *self) {
   if (self->mouse_dragging) {
     double dx = x - self->last_mouse_x;
     double dy = y - self->last_mouse_y;
@@ -36,8 +36,8 @@ void gl_motion_notify_event(GtkEventControllerMotion *controller,
   }
 }
 
-void gl_scroll_event(GtkEventControllerScroll *controller, double dx,
-                            double dy, ViewerAppWindow *self) {
+void gl_scroll_event(GtkEventControllerScroll *controller, double dx, double dy,
+                     ViewerAppWindow *self) {
   GdkModifierType state = gtk_event_controller_get_current_event_state(
       GTK_EVENT_CONTROLLER(controller));
   if (state & GDK_SHIFT_MASK) {
@@ -45,14 +45,9 @@ void gl_scroll_event(GtkEventControllerScroll *controller, double dx,
     self->matrix_movement.scale_vector[Y_AXIS] += dy;
     self->matrix_movement.scale_vector[Z_AXIS] += dy;
 
-    if (self->matrix_movement.scale_vector[X_AXIS] < 0.1) {
-      self->matrix_movement.scale_vector[X_AXIS] = 0.1;
-    }
-    if (self->matrix_movement.scale_vector[Y_AXIS] < 0.1) {
-      self->matrix_movement.scale_vector[Y_AXIS] = 0.1;
-    }
-    if (self->matrix_movement.scale_vector[Z_AXIS] < 0.1) {
-      self->matrix_movement.scale_vector[Z_AXIS] = 0.1;
+    for (int i = 0; i < N_AXES; i++) {
+      self->matrix_movement.scale_vector[i] =
+          fmax(fmin(self->matrix_movement.scale_vector[i] + dy, 1.0), 0.1);
     }
 
     move_mvp_matrix(self->mvp_matrix, &self->matrix_movement);

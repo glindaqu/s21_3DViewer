@@ -3,8 +3,6 @@
 
 #include "viewer-app-window.h"
 
-
-
 /**
  * @brief Callback, вызываемый при открытии файла
  *
@@ -23,7 +21,6 @@
  */
 void open_file(ViewerAppWindow *self, GFile *file);
 
-
 /**
  * @brief Callback, вызываемый, когда пользователь выбирает файл
  *        в диалоге открытия файла
@@ -35,7 +32,7 @@ void open_file(ViewerAppWindow *self, GFile *file);
  * @author yukikoqo
  */
 void on_open_response(GObject *source, GAsyncResult *result,
-                             gpointer user_data);
+                      gpointer user_data);
 
 /**
  * @brief Callback, вызываемый при активации действия "open" в главном меню
@@ -47,8 +44,7 @@ void on_open_response(GObject *source, GAsyncResult *result,
  *
  * @author yukikoqo
  */
-void viewer_app_window__open_file_dialog(GAction *action,
-                                                GVariant *parameter,
-                                                ViewerAppWindow *self);
+void viewer_app_window__open_file_dialog(GAction *action, GVariant *parameter,
+                                         ViewerAppWindow *self);
 
 #endif  // _VIEWER_OPENFILE_H

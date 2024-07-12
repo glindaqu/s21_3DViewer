@@ -18,7 +18,7 @@ all: build clang-format
 build: build-parser build-ui build-matrix_calc build-settings build-opengl build-file_processing build-modelMovement
 	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o $(EXECUTABLE) -lparser -lepoxy -lm -lmatrix_calc
 
-run: build
+run: all
 	@echo "Running the application..."
 	GSETTINGS_SCHEMA_DIR=modules/ui ./3DViewer.out
 

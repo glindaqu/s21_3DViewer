@@ -1,16 +1,16 @@
 #include "../../include/viewer-glarea.h"
 
-#include "../../include/viewer-glfuncs.h"
-#include "../../include/viewer-gif.h"
 #include <glib/gthread.h>
 
+#include "../../include/viewer-gif.h"
+#include "../../include/viewer-glfuncs.h"
+
 void gl_init(ViewerAppWindow *self) {
-  gtk_gl_area_make_current (GTK_GL_AREA(self->gl_drawing_area));
+  gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
 
   GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
   if (error != NULL) {
-    g_warning(
-      "GL area error: %s", error->message);
+    g_warning("GL area error: %s", error->message);
     g_error_free(error);
     return;
   }
@@ -20,9 +20,8 @@ void gl_init(ViewerAppWindow *self) {
 
   glEnable(GL_DEPTH_TEST);
 
-
   glEnable(GL_PROGRAM_POINT_SIZE);
-  
+
   glEnable(GL_LINE_SMOOTH);
 
   init_buffers(self->obj_file, &self->gl_buffers);
@@ -37,7 +36,7 @@ void gl_init(ViewerAppWindow *self) {
 
 void gl_fini(ViewerAppWindow *self) {
   gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
-  
+
   if (gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area)) != NULL) return;
 
   glDelBuffers(&self->gl_buffers);
@@ -47,51 +46,53 @@ void gl_fini(ViewerAppWindow *self) {
 void gl_draw_lines(ViewerAppWindow *self) {
   glUseProgram(self->shader_vars.program);
 
-  self->shader_vars.loc_lineColor = glGetUniformLocation(self->shader_vars.program, "lineColor");
+  self->shader_vars.loc_lineColor =
+      glGetUniformLocation(self->shader_vars.program, "lineColor");
 
   glUniform3fv(self->shader_vars.loc_lineColor, 1, self->edge_color);
   glUniform1ui(self->shader_vars.loc_pattern, self->pattern);
   glUniform1f(self->shader_vars.loc_factor, self->factor);
   glUniform2f(self->shader_vars.loc_res, 800.f, 800.f);
-  
-  glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE, &self->projection_matrix[0][0]);
+
+  glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE,
+                     &self->projection_matrix[0][0]);
   glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
                      &self->mvp_matrix->mvp[0]);
-  
+
   glBindVertexArray(self->gl_buffers.vao);
 
-  glLineWidth(self->edge_thickness); 
+  glLineWidth(self->edge_thickness);
   glDrawElements(GL_LINES, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
                  0);
 }
 
 void gl_draw_points(ViewerAppWindow *self) {
   if (self->point_type == 1) {
-  glUseProgram(self->shader_vars.point_program);
+    glUseProgram(self->shader_vars.point_program);
 
-  self->shader_vars.loc_lineColor = glGetUniformLocation(self->shader_vars.point_program, "lineColor");
-  glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
-                     &self->mvp_matrix->mvp[0]);
-  glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE, &self->projection_matrix[0][0]);
-
+    self->shader_vars.loc_lineColor =
+        glGetUniformLocation(self->shader_vars.point_program, "lineColor");
+    glUniformMatrix4fv(self->shader_vars.mvp_location, 1, GL_FALSE,
+                       &self->mvp_matrix->mvp[0]);
+    glUniformMatrix4fv(self->shader_vars.projection_location, 1, GL_FALSE,
+                       &self->projection_matrix[0][0]);
   }
   if (self->point_type == 2 || self->point_type == 1) {
     glUniform3fv(self->shader_vars.loc_lineColor, 1, self->point_color);
     glPointSize(self->point_size);
-    glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6, GL_UNSIGNED_INT,
-                  0);
+    glDrawElements(GL_POINTS, self->obj_file->surfacesCount * 6,
+                   GL_UNSIGNED_INT, 0);
   }
 }
 
 typedef struct {
-    ViewerAppWindow *self;
-    uint8_t *frame_data;
-    uint16_t width;
-    uint16_t height;
+  ViewerAppWindow *self;
+  uint8_t *frame_data;
+  uint16_t width;
+  uint16_t height;
 } FrameData;
 
 void gl_model_draw(ViewerAppWindow *self) {
-
   gl_draw_lines(self);
 
   gl_draw_points(self);
@@ -101,14 +102,16 @@ void gl_model_draw(ViewerAppWindow *self) {
 }
 
 static void *process_frame_async(void *data) {
-    FrameData *frame_data = (FrameData *)data;
-    add_frame_to_buffer(frame_data->self, frame_data->frame_data, frame_data->width, frame_data->height);
-    free(frame_data->frame_data);
-    g_free(frame_data);
-    return NULL;
+  FrameData *frame_data = (FrameData *)data;
+  add_frame_to_buffer(frame_data->self, frame_data->frame_data,
+                      frame_data->width, frame_data->height);
+  free(frame_data->frame_data);
+  g_free(frame_data);
+  return NULL;
 }
 gboolean gl_draw(ViewerAppWindow *self) {
-  glClearColor(self->background_color.red, self->background_color.green, self->background_color.blue, self->background_color.alpha);
+  glClearColor(self->background_color.red, self->background_color.green,
+               self->background_color.blue, self->background_color.alpha);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   gl_model_draw(self);
@@ -125,7 +128,7 @@ gboolean gl_draw(ViewerAppWindow *self) {
       int width = gtk_widget_get_width(gl_area);
       int height = gtk_widget_get_height(gl_area);
 
-      uint8_t* frame_data = capture_frame_from_opengl(width, height);
+      uint8_t *frame_data = capture_frame_from_opengl(width, height);
       FrameData *data = g_new(FrameData, 1);
       data->self = self;
       data->frame_data = frame_data;

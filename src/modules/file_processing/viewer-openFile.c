@@ -1,4 +1,5 @@
 #include "../../include/viewer-openFile.h"
+
 #include "../../include/viewer-setLabel.h"
 
 void open_file(ViewerAppWindow *self, GFile *file) {
@@ -18,7 +19,7 @@ void open_file(ViewerAppWindow *self, GFile *file) {
     g_printerr("Unable to parse “%s”\n", g_file_peek_path(file));
     return;
   }
-  
+
   gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
 
   GLenum err;
@@ -35,8 +36,7 @@ void open_file(ViewerAppWindow *self, GFile *file) {
 
   glDelBuffers(&self->gl_buffers);
 
-  init_buffers(self->obj_file,
-               &self->gl_buffers);
+  init_buffers(self->obj_file, &self->gl_buffers);
 
   init_mvp_matrix(self->mvp_matrix);
   gtk_range_set_value(GTK_RANGE(self->x_scale), 0);
@@ -53,7 +53,7 @@ void open_file(ViewerAppWindow *self, GFile *file) {
 }
 
 void on_open_response(GObject *source, GAsyncResult *result,
-                             gpointer user_data) {
+                      gpointer user_data) {
   GtkFileDialog *dialog = GTK_FILE_DIALOG(source);
   ViewerAppWindow *self = user_data;
 
@@ -62,9 +62,8 @@ void on_open_response(GObject *source, GAsyncResult *result,
   if (file != NULL) open_file(self, file);
 }
 
-void viewer_app_window__open_file_dialog(GAction *action,
-                                                GVariant *parameter,
-                                                ViewerAppWindow *self) {
+void viewer_app_window__open_file_dialog(GAction *action, GVariant *parameter,
+                                         ViewerAppWindow *self) {
   g_autoptr(GtkFileDialog) dialog = gtk_file_dialog_new();
 
   gtk_file_dialog_open(dialog, GTK_WINDOW(self), NULL, on_open_response, self);

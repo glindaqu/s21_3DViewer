@@ -1,13 +1,13 @@
 #ifndef _3DVIEWER_APP_WINDOW_H
 #define _3DVIEWER_APP_WINDOW_H
 
-#include <gtk/gtk.h>
-#include <cglm/cglm.h>
 #include <cgif.h>
+#include <cglm/cglm.h>
+#include <gtk/gtk.h>
 
-#include "viewer-app.h"
 #include "matrix_calc.h"
 #include "parser.h"
+#include "viewer-app.h"
 #include "viewer-glfuncs.h"
 
 G_BEGIN_DECLS
@@ -55,7 +55,7 @@ struct _ViewerAppWindow {
   /* Settings */
   gint point_type;
   gfloat point_size;
-  gfloat edge_thickness; 
+  gfloat edge_thickness;
   gfloat edge_color[3];
   gfloat point_color[3];
   GdkRGBA background_color;

@@ -4,9 +4,10 @@
     <file preprocess="xml-stripblanks">viewer-app-window.ui</file>
     <file preprocess="xml-stripblanks">viewer-app-menu.ui</file>
     <file preprocess="xml-stripblanks">viewer-app-settings.ui</file>
-    <file>glarea-fragment.glsl</file>
-    <file>glarea-point.glsl</file>
-    <file>window-style.css</file>
-    <file>glarea-vertex.glsl</file>
+    <file>resources/shaders/glarea-fragment.glsl</file>
+    <file>resources/shaders/glarea-point.glsl</file>
+    <file>resources/css/window-style.css</file>
+    <file>resources/shaders/glarea-vertex.glsl</file>
+    <file>resources/icons/icon.png</file>
   </gresource>
 </gresources>
