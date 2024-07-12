@@ -20,6 +20,8 @@ static void viewer_app_window_dispose(GObject *object) {
 
   win = VIEWER_APP_WINDOW(object);
 
+  free_frame_buffer();
+  
   if (win->mvp_matrix) {
     free(win->mvp_matrix);
     win->mvp_matrix = NULL;
@@ -199,6 +201,8 @@ static void viewer_app_window_init(ViewerAppWindow *self) {
   viewer_app_window_add_scroll_action(self);
 
   viewer_app_window_add_scale_action(self);
+
+  init_frame_buffer();
   
   gtk_window_set_icon_name(GTK_WINDOW(self), "viewer");
 }

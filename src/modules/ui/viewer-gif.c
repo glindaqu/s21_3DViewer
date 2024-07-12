@@ -1,16 +1,52 @@
 #include "viewer-gif.h"
+#include <glib.h>
 
-static void stop_recording(ViewerAppWindow *self) {
-  if (self->recording) {
-    int result = cgif_close(self->gif);
-    if (result != CGIF_OK) {
-        g_print("Failed to close GIF file: %d\n", result);
+typedef struct {
+    uint8_t* pImageData;
+    uint16_t width;
+    uint16_t height;
+    int delay;
+} FrameBufferEntry;
+
+static GQueue* frame_buffer = NULL;
+static const int MAX_FRAMES = 5 * 10;
+
+void clear_frame_buffer(void) {
+    while (!g_queue_is_empty(frame_buffer)) {
+        FrameBufferEntry* entry = g_queue_pop_head(frame_buffer);
+        free(entry->pImageData);
+        free(entry);
     }
-    self->recording = FALSE;
-    g_print("Recording finished\n");
-  }
 }
 
+void init_frame_buffer(void) {
+    if (frame_buffer != NULL) {
+        clear_frame_buffer();
+    } else {
+        frame_buffer = g_queue_new();
+    }
+}
+
+void free_frame_buffer(void) {
+    clear_frame_buffer();
+    g_queue_free(frame_buffer);
+    frame_buffer = NULL;
+}
+
+void write_frames_to_gif(ViewerAppWindow* self);
+static void stop_recording(ViewerAppWindow *self) {
+    if (self->recording) {
+        int result = cgif_close(self->gif);
+        if (result != CGIF_OK) {
+            g_print("Failed to close GIF file: %d\n", result);
+        }
+        if (self->gif == NULL) {
+            g_print("Failed to recreate GIF file\n");
+        }
+        self->recording = FALSE;
+        g_print("Recording finished\n");
+    }
+}
 uint8_t* capture_frame_from_opengl(uint16_t width, uint16_t height) {
     uint8_t* pixels = (uint8_t*)malloc(width * height * 3);
     if (!pixels) {
@@ -42,16 +78,12 @@ uint8_t* capture_frame_from_opengl(uint16_t width, uint16_t height) {
     return flippedPixels;
 }
 
-void add_frame_to_gif(ViewerAppWindow* self, const uint8_t* rgb_data, uint16_t width, uint16_t height) {
-    const uint8_t aPalette[] = {self->background_color.red * 255, self->background_color.green * 255, self->background_color.blue * 255,
-                    self->edge_color[0] * 255, self->edge_color[1] * 255, self->edge_color[2] * 255,
-                    self->point_color[0] * 255, self->point_color[1] * 255, self->point_color[2] * 255
-    };  
-    g_print("Add frame to GIF\n");
+void add_frame_to_buffer(ViewerAppWindow* self, const uint8_t* rgb_data, uint16_t width, uint16_t height) {
+    g_print("Add frame to buffer\n");
     uint8_t* pImageData = malloc(width * height);
-    const int32_t palette_red = aPalette[0] + aPalette[1] + aPalette[2];
-    const int32_t palette_edge = aPalette[3] + aPalette[4] + aPalette[5];
-    const int32_t palette_point = aPalette[6] + aPalette[7] + aPalette[8];
+    const int32_t palette_red = self->background_color.red * 255 + self->background_color.green * 255 + self->background_color.blue * 255;
+    const int32_t palette_edge = self->edge_color[0] * 255 + self->edge_color[1] * 255 + self->edge_color[2] * 255;
+    const int32_t palette_point =  self->point_color[0] * 255 + self->point_color[1] * 255 + self->point_color[2] * 255;
     const int32_t abs_threshold = 1;
     for (int i = 0, j = 0; i < width * height * 3; i+=3, j++) {
         int32_t rgb_sum = rgb_data[i] + rgb_data[i + 1] + rgb_data[i + 2];
@@ -66,19 +98,38 @@ void add_frame_to_gif(ViewerAppWindow* self, const uint8_t* rgb_data, uint16_t w
         }
     }
 
-    CGIF_FrameConfig frame_config  = {
-        .delay = 10,
-        .pImageData = pImageData,
-    };
-    int result = cgif_addframe(self->gif, &frame_config);
-    if (result != CGIF_OK) {
-        fprintf(stderr, "Failed to add frame to GIF: %d\n", result);
+    FrameBufferEntry* entry = malloc(sizeof(FrameBufferEntry));
+    if (entry == NULL) {
+        g_print("Failed to allocate memory for FrameBufferEntry\n");
+        free(pImageData);
+        return;
     }
-    self->frame_counter++;
-    if (self->frame_counter >= 100) {
-      stop_recording(self);
+    entry->pImageData = pImageData;
+    entry->width = width;
+    entry->height = height;
+    entry->delay = 10;
+
+    g_queue_push_tail(frame_buffer, entry);
+
+    if (g_queue_get_length(frame_buffer) >= MAX_FRAMES) {
+        write_frames_to_gif(self);
     }
-    free(pImageData);
+}
+
+void write_frames_to_gif(ViewerAppWindow* self) {
+    while (!g_queue_is_empty(frame_buffer)) {
+        FrameBufferEntry* entry = g_queue_pop_head(frame_buffer);
+        CGIF_FrameConfig frame_config = {
+            .delay = entry->delay,
+            .pImageData = entry->pImageData,
+        };
+        if (cgif_addframe(self->gif, &frame_config) != CGIF_OK) {
+            fprintf(stderr, "Failed to add frame to GIF\n");
+        }
+        free(entry->pImageData);
+        free(entry);
+    }
+    stop_recording(self);
 }
 
 static void save_gif_callback(GtkFileDialog *dialog, GAsyncResult *result, gpointer user_data) {
@@ -104,6 +155,7 @@ static void save_gif_callback(GtkFileDialog *dialog, GAsyncResult *result, gpoin
             self->recording = TRUE;
             self->frame_counter = 0;
             g_print("Recording started\n");
+            init_frame_buffer();
         } else {
             g_print("Failed to create GIF file\n");
         }

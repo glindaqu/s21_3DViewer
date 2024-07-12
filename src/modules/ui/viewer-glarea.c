@@ -102,7 +102,7 @@ void gl_model_draw(ViewerAppWindow *self) {
 
 static void *process_frame_async(void *data) {
     FrameData *frame_data = (FrameData *)data;
-    add_frame_to_gif(frame_data->self, frame_data->frame_data, frame_data->width, frame_data->height);
+    add_frame_to_buffer(frame_data->self, frame_data->frame_data, frame_data->width, frame_data->height);
     free(frame_data->frame_data);
     g_free(frame_data);
     return NULL;
@@ -118,7 +118,7 @@ gboolean gl_draw(ViewerAppWindow *self) {
   if (self->recording) {
     static guint64 last_frame_time = 0;
     guint64 current_time = g_get_real_time();
-    if (current_time - last_frame_time >= G_USEC_PER_SEC / 30) {
+    if (current_time - last_frame_time >= G_USEC_PER_SEC / 10) {
       last_frame_time = current_time;
 
       GtkWidget *gl_area = GTK_WIDGET(self->gl_drawing_area);
