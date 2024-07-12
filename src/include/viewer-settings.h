@@ -16,7 +16,6 @@
  */
 void open_settings_dialog(GAction *action, GVariant *parameter,
                                  ViewerAppWindow *self);
-
 /**
  * @brief Задает перспективное преобразование для окна просмотра.
  *
@@ -30,7 +29,6 @@ void open_settings_dialog(GAction *action, GVariant *parameter,
  * Функция задает перспективное преобразование для окна просмотра OpenGL.
  */
 void set_perspective_projection(ViewerAppWindow* self, float fovy, float aspect, float nearZ, float farZ);
-
 
 /**
  * @brief Задает ортогональное преобразование для окна просмотра.

@@ -2,33 +2,37 @@ CC?=gcc
 GCC_FLAGS = -Wall -Werror -Wextra -Wno-unused-function -g
 CHECK_FLAGS = $(shell pkg-config --cflags check) $(shell pkg-config --libs check)
 GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4 cgif)
-UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/ui/viewer-openFile.o \
-modules/ui/viewer-glarea.o modules/ui/viewer-setLabel.o modules/ui/viewer-app-window.o \
-modules/ui/viewer-error.o modules/ui/viewer-glfuncs.o modules/ui/viewer-app-settings.o \
-modules/ui/viewer-modelMovement.o modules/ui/viewer-settings.o modules/ui/viewer-screenshots.o \
-modules/ui/viewer-gif.o
-PREFIX ?= /usr/local
-BINDIR = $(PREFIX)/bin
-SHAREDIR = $(PREFIX)/share
-ICONDIR = $(SHAREDIR)/icons/hicolor/scalable/apps
-APPLICATIONSDIR = $(SHAREDIR)/applications
-SCHEMADIR = $(SHAREDIR)/glib-2.0/schemas
+UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/file_processing/viewer-openFile.o \
+modules/opengl/viewer-glarea.o modules/ui/viewer-setLabel.o modules/ui/viewer-app-window.o \
+modules/ui/viewer-error.o modules/opengl/viewer-glfuncs.o modules/ui/viewer-app-settings.o \
+modules/model_movement/viewer-modelMovement.o modules/settings/viewer-settings.o modules/file_processing/viewer-screenshots.o \
+modules/file_processing/viewer-gif.o
 
 EXECUTABLE = 3DViewer.out
-ICON = school21.gdy._3dviewer.png
-DESKTOP_FILE = your-app.desktop
 SCHEMA_FILE = modules/ui/school21.gdy._3dviewer.gschema.xml
 
 .PHONY: all build clean clang-format clang-format-check clear install uninstall
 
 all: build clang-format
 
-build: build-parser build-ui build-matrix_calc
+build: build-parser build-ui build-matrix_calc build-settings build-opengl build-file_processing build-modelMovement
 	$(CC) $(GTK_FLAGS) -I./include/ -L./include/ 3DViewer/main.c $(UI_MODULES) -o $(EXECUTABLE) -lparser -lepoxy -lm -lmatrix_calc
 
 run: build
 	@echo "Running the application..."
 	GSETTINGS_SCHEMA_DIR=modules/ui ./3DViewer.out
+
+build-modelMovement:
+	@$(MAKE) -C modules/model_movement
+
+build-file_processing:
+	@$(MAKE) -C modules/file_processing
+
+build-opengl:
+	@$(MAKE) -C modules/opengl
+
+build-settings:
+	@$(MAKE) -C modules/settings
 
 build-parser:
 	@$(MAKE) -C modules/parser
@@ -55,26 +59,13 @@ clean: clear
 
 clear:
 	@echo "Cleaning..."
+	@$(MAKE) -C modules/opengl clean
 	@$(MAKE) -C modules/parser clean
+	@$(MAKE) -C modules/file_processing clean
+	@$(MAKE) -C modules/model_movement clean
+	@$(MAKE) -C modules/settings clean
 	@$(MAKE) -C modules/ui clean
 	@$(MAKE) -C modules/matrix_calc clean
 	@find . -name "*.o" -o -name "*.a" -o -name "*.out" | xargs rm -rf
 	@rm -rf *.out
 
-install:
-	@echo "Installing..."
-	@install -Dm755 $(EXECUTABLE) $(DESTDIR)$(BINDIR)/main
-	@install -Dm644 $(ICON) $(DESTDIR)$(ICONDIR)/$(ICON)
-	@install -Dm644 $(DESKTOP_FILE) $(DESTDIR)$(APPLICATIONSDIR)/$(DESKTOP_FILE)
-	@install -Dm644 $(SCHEMA_FILE) $(DESTDIR)$(SCHEMADIR)/$(SCHEMA_FILE)
-	@glib-compile-schemas $(DESTDIR)$(SCHEMADIR)
-	@update-icon-caches $(DESTDIR)$(ICONDIR)
-
-uninstall:
-	@echo "Uninstalling..."
-	@rm -f $(DESTDIR)$(BINDIR)/main
-	@rm -f $(DESTDIR)$(ICONDIR)/$(ICON)
-	@rm -f $(DESTDIR)$(APPLICATIONSDIR)/$(DESKTOP_FILE)
-	@rm -f $(DESTDIR)$(SCHEMADIR)/$(SCHEMA_FILE)
-	@glib-compile-schemas $(DESTDIR)$(SCHEMADIR)
-	@update-icon-caches $(DESTDIR)$(ICONDIR)
