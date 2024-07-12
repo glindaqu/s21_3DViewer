@@ -13,30 +13,56 @@ static void stop_recording(ViewerAppWindow *self) {
 
 uint8_t* capture_frame_from_opengl(uint16_t width, uint16_t height) {
     uint8_t* pixels = (uint8_t*)malloc(width * height * 3);
+    if (!pixels) {
+        g_print("Failed to allocate memory for frame capture\n");
+        return NULL;
+    }
+
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-    return pixels;
+
+    uint8_t* flippedPixels = (uint8_t*)malloc(width * height * 3);
+    if (!flippedPixels) {
+        free(pixels);
+        g_print("Failed to allocate memory for frame flip capture\n");
+        return NULL; 
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int srcIndex = (y * width + x) * 3;
+            int destIndex = ((height - 1 - y) * width + x) * 3;
+            flippedPixels[destIndex] = pixels[srcIndex];
+            flippedPixels[destIndex + 1] = pixels[srcIndex + 1];
+            flippedPixels[destIndex + 2] = pixels[srcIndex + 2];
+        }
+    }
+
+    free(pixels);
+
+    return flippedPixels;
 }
 
 void add_frame_to_gif(ViewerAppWindow* self, const uint8_t* rgb_data, uint16_t width, uint16_t height) {
     const uint8_t aPalette[] = {self->background_color.red * 255, self->background_color.green * 255, self->background_color.blue * 255,
                     self->edge_color[0] * 255, self->edge_color[1] * 255, self->edge_color[2] * 255,
                     self->point_color[0] * 255, self->point_color[1] * 255, self->point_color[2] * 255
-    };
-    uint32_t* real_rgb_data = (uint32_t*)calloc(width * height, sizeof(uint32_t));
-    for (int i = 0, j = 0; i < width * height * 3; i+=3, j++) {
-        real_rgb_data[j] = rgb_data[i] + rgb_data[i + 1] + rgb_data[i + 2]; 
-    }   
+    };  
     g_print("Add frame to GIF\n");
     uint8_t* pImageData = malloc(width * height);
-    for (int i = 0; i < width * height; i++) {
-        if (abs((int)real_rgb_data[i] - (int)(aPalette[0] + aPalette[1] + aPalette[2])) <= 1) {
-            pImageData[i] = 0;   
+    const int32_t palette_red = aPalette[0] + aPalette[1] + aPalette[2];
+    const int32_t palette_edge = aPalette[3] + aPalette[4] + aPalette[5];
+    const int32_t palette_point = aPalette[6] + aPalette[7] + aPalette[8];
+    const int32_t abs_threshold = 1;
+    for (int i = 0, j = 0; i < width * height * 3; i+=3, j++) {
+        int32_t rgb_sum = rgb_data[i] + rgb_data[i + 1] + rgb_data[i + 2];
+        if (abs(rgb_sum - palette_red) <= abs_threshold) {
+            pImageData[j] = 0;   
         }
-        else if (abs((int)real_rgb_data[i] - (int)(aPalette[3] + aPalette[4] + aPalette[5])) <= 1) {
-            pImageData[i] = 1;
+        else if (abs(rgb_sum - palette_edge) <= abs_threshold) {
+            pImageData[j] = 1;
         }
-        else if (abs((int)real_rgb_data[i] - (int)(aPalette[6] + aPalette[7] + aPalette[8])) <= 1) {
-            pImageData[i] = 2;
+        else if (abs(rgb_sum - palette_point) <= abs_threshold) {
+            pImageData[j] = 2;
         }
     }
 
@@ -49,19 +75,15 @@ void add_frame_to_gif(ViewerAppWindow* self, const uint8_t* rgb_data, uint16_t w
         fprintf(stderr, "Failed to add frame to GIF: %d\n", result);
     }
     self->frame_counter++;
-    if (self->frame_counter >= 500) {
+    if (self->frame_counter >= 100) {
       stop_recording(self);
     }
-    free(real_rgb_data);
     free(pImageData);
 }
 
 static void save_gif_callback(GtkFileDialog *dialog, GAsyncResult *result, gpointer user_data) {
     ViewerAppWindow *self = VIEWER_APP_WINDOW(user_data);
     GFile *file = gtk_file_dialog_save_finish(dialog, result, NULL);
-    // uint8_t aPalette[] = {0xFF, 0xFF, 0x00,
-    //                     0x00, 0xFF, 0x00,
-    //                     0x00, 0x00, 0xFF};  
     const uint8_t aPalette[] = {self->background_color.red * 255, self->background_color.green * 255, self->background_color.blue * 255,
                     self->edge_color[0] * 255, self->edge_color[1] * 255, self->edge_color[2] * 255,
                     self->point_color[0] * 255, self->point_color[1] * 255, self->point_color[2] * 255

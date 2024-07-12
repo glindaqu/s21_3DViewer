@@ -2,6 +2,7 @@
 
 #include "viewer-glfuncs.h"
 #include "viewer-gif.h"
+#include <glib/gthread.h>
 
 void gl_init(ViewerAppWindow *self) {
   gtk_gl_area_make_current (GTK_GL_AREA(self->gl_drawing_area));
@@ -82,6 +83,13 @@ void gl_draw_points(ViewerAppWindow *self) {
   }
 }
 
+typedef struct {
+    ViewerAppWindow *self;
+    uint8_t *frame_data;
+    uint16_t width;
+    uint16_t height;
+} FrameData;
+
 void gl_model_draw(ViewerAppWindow *self) {
 
   gl_draw_lines(self);
@@ -92,6 +100,13 @@ void gl_model_draw(ViewerAppWindow *self) {
   glUseProgram(0);
 }
 
+static void *process_frame_async(void *data) {
+    FrameData *frame_data = (FrameData *)data;
+    add_frame_to_gif(frame_data->self, frame_data->frame_data, frame_data->width, frame_data->height);
+    free(frame_data->frame_data);
+    g_free(frame_data);
+    return NULL;
+}
 gboolean gl_draw(ViewerAppWindow *self) {
   glClearColor(self->background_color.red, self->background_color.green, self->background_color.blue, self->background_color.alpha);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -101,14 +116,24 @@ gboolean gl_draw(ViewerAppWindow *self) {
   glFlush();
 
   if (self->recording) {
-    
-    GtkWidget *gl_area = GTK_WIDGET(self->gl_drawing_area);
-    int width = gtk_widget_get_width(gl_area);
-    int height = gtk_widget_get_height(gl_area);
-    
-    uint8_t* rgba_data = capture_frame_from_opengl(width, height);
-    add_frame_to_gif(self, rgba_data, width, height);
-    free(rgba_data);
+    static guint64 last_frame_time = 0;
+    guint64 current_time = g_get_real_time();
+    if (current_time - last_frame_time >= G_USEC_PER_SEC / 30) {
+      last_frame_time = current_time;
+
+      GtkWidget *gl_area = GTK_WIDGET(self->gl_drawing_area);
+      int width = gtk_widget_get_width(gl_area);
+      int height = gtk_widget_get_height(gl_area);
+
+      uint8_t* frame_data = capture_frame_from_opengl(width, height);
+      FrameData *data = g_new(FrameData, 1);
+      data->self = self;
+      data->frame_data = frame_data;
+      data->width = width;
+      data->height = height;
+
+      g_thread_new("frame_processor", process_frame_async, data);
+    }
   }
 
   return TRUE;

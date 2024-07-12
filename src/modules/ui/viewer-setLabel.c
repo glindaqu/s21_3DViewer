@@ -17,7 +17,7 @@ void update_label_text(AppData *self) {
   const char *formatted_vertices = format_number(self->obj_file->verticesCount);
   const char *formatted_surfaces = format_number(self->obj_file->surfacesCount);
   char *model_name;
-  if (strlen(basename) > 9) {
+  if (strlen(basename) > 15) {
     model_name = g_strdup_printf("*...[.obj]");
   } else {
     model_name = g_strdup_printf("%s", basename);
