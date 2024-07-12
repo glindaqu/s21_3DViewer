@@ -43,8 +43,7 @@ build-ui:
 build-matrix_calc:
 	@$(MAKE) -C modules/matrix_calc
 
-test-parser:
-	@$(MAKE) -C modules/parser
+test-parser: build-parser
 	@checkmk tests/parser/parser.check > tests/parser/parser.c
 	@$(CC) --coverage $(GCC_FLAGS) $(CHECK_FLAGS) -I./include/ -L./include/ tests/parser/parser.c -o tests/parser/test-parser.out -lparser
 	@./tests/parser/test-parser.out
@@ -70,6 +69,7 @@ clear:
 	@$(MAKE) -C modules/settings clean
 	@$(MAKE) -C modules/ui clean
 	@$(MAKE) -C modules/matrix_calc clean
-	@find . -name "*.o" -o -name "*.a" -o -name "*.out" | xargs rm -rf
+	@find . -name "*.o" -o -name "*.a" -o -name "*.out" -o -name "*.gcda" -o -name "*.gcno" | xargs rm -rf
 	@rm -rf *.out
+	@rm -rf tests/parser/parser.c
 
