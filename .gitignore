@@ -71,4 +71,4 @@ Mkfile.old
 dkms.conf
 
 # allow 3d object files
-!./src/data/*.obj
+!/src/data/*.obj
