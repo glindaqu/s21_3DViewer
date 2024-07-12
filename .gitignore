@@ -1,6 +1,10 @@
 #vscode
 .vscode
 
+#gcov
+*.gcda
+*.gcno
+
 #gtk
 resources.c
 *.compiled
