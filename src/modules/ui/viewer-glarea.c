@@ -1,7 +1,7 @@
-#include "viewer-glarea.h"
+#include "../../include/viewer-glarea.h"
 
-#include "viewer-glfuncs.h"
-#include "viewer-gif.h"
+#include "../../include/viewer-glfuncs.h"
+#include "../../include/viewer-gif.h"
 #include <glib/gthread.h>
 
 void gl_init(ViewerAppWindow *self) {
@@ -25,7 +25,7 @@ void gl_init(ViewerAppWindow *self) {
   
   glEnable(GL_LINE_SMOOTH);
 
-  init_buffers(self->obj_file, 0, 0, &self->gl_buffers);
+  init_buffers(self->obj_file, &self->gl_buffers);
 
   error = NULL;
   if (!init_shaders(&self->shader_vars, &error)) {

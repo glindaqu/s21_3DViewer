@@ -1,5 +1,5 @@
-#include "viewer-settings.h"
-#include "viewer-app-settings.h"
+#include "../../include/viewer-settings.h"
+#include "../../include/viewer-app-settings.h"
 #include <cglm/cglm.h>
 
 void open_settings_dialog(GAction *action, GVariant *parameter,

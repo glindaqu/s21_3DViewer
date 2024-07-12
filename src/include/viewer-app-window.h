@@ -6,8 +6,8 @@
 #include <cgif.h>
 
 #include "viewer-app.h"
-#include "../../include/matrix_calc.h"
-#include "../../include/parser.h"
+#include "matrix_calc.h"
+#include "parser.h"
 #include "viewer-glfuncs.h"
 
 G_BEGIN_DECLS

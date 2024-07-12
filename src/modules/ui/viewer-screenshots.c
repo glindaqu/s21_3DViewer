@@ -1,4 +1,4 @@
-#include "viewer-screenshots.h"
+#include "../../include/viewer-screenshots.h"
 
 static void save_image_as_bmp(ViewerAppWindow *self, const char *filename) {
     GtkWidget *gl_area = GTK_WIDGET(self->gl_drawing_area);

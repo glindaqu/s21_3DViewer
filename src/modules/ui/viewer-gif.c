@@ -1,4 +1,4 @@
-#include "viewer-gif.h"
+#include "../../include/viewer-gif.h"
 #include <glib.h>
 
 typedef struct {

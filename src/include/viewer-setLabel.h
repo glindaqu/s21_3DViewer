@@ -4,7 +4,7 @@
 #include <epoxy/gl.h>
 #include <gtk/gtk.h>
 
-#include "../../include/parser.h"
+#include "parser.h"
 
 typedef struct {
   GtkLabel *model_name_label;

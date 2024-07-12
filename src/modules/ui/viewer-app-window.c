@@ -1,15 +1,15 @@
-#include "viewer-app-window.h"
+#include "../../include/viewer-app-window.h"
 
 #include <epoxy/gl.h>
 
 #include "../../include/matrix_calc.h"
 #include "../../include/parser.h"
-#include "viewer-screenshots.h"
-#include "viewer-glarea.h"
-#include "viewer-openFile.h"
-#include "viewer-modelMovement.h"
-#include "viewer-settings.h"
-#include "viewer-gif.h"
+#include "../../include/viewer-screenshots.h"
+#include "../../include/viewer-glarea.h"
+#include "../../include/viewer-openFile.h"
+#include "../../include/viewer-modelMovement.h"
+#include "../../include/viewer-settings.h"
+#include "../../include/viewer-gif.h"
 
 G_DEFINE_TYPE(ViewerAppWindow, viewer_app_window, GTK_TYPE_APPLICATION_WINDOW)
 

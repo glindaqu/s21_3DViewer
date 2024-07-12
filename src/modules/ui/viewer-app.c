@@ -1,9 +1,8 @@
-#include "viewer-app.h"
+#include "../../include/viewer-app.h"
 
 #include <gtk/gtk.h>
 
-#include "viewer-app-settings.h"
-#include "viewer-app-window.h"
+#include "../../include/viewer-app-window.h"
 
 struct _ViewerApp {
   GtkApplication parent_instance;

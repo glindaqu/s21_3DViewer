@@ -1,5 +1,5 @@
-#include "viewer-openFile.h"
-#include "viewer-setLabel.h"
+#include "../../include/viewer-openFile.h"
+#include "../../include/viewer-setLabel.h"
 
 void open_file(ViewerAppWindow *self, GFile *file) {
   if (file == NULL) {
@@ -35,7 +35,7 @@ void open_file(ViewerAppWindow *self, GFile *file) {
 
   glDelBuffers(&self->gl_buffers);
 
-  init_buffers(self->obj_file, 0, 1,
+  init_buffers(self->obj_file,
                &self->gl_buffers);
 
   init_mvp_matrix(self->mvp_matrix);

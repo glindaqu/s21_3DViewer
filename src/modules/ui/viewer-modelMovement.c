@@ -1,4 +1,4 @@
-#include "viewer-modelMovement.h"
+#include "../../include/viewer-modelMovement.h"
 
 void gl_button_press_event(GtkGestureClick *gesture, int n_press,
                                   double x, double y, ViewerAppWindow *self) {

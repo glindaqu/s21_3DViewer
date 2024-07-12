@@ -1,4 +1,4 @@
-#include "viewer-app-settings.h"
+#include "../../include/viewer-app-settings.h"
 
 #include <gtk/gtk.h>
 

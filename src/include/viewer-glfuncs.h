@@ -4,8 +4,7 @@
 #include <epoxy/gl.h>
 #include <gtk/gtk.h>
 
-#include "../../include/parser.h"
-#include "viewer-error.h"
+#include "parser.h"
 
 typedef struct GLbuffers_t{
   GLuint vao;
@@ -25,7 +24,7 @@ typedef struct GLshader_vars_t{
   GLuint color_location;
 } GLshader_vars_t;
 
-void init_buffers(ObjFile_t *objFile, guint position_index, guint color_index, GLbuffers_t *buffers_out);
+void init_buffers(ObjFile_t *objFile, GLbuffers_t *buffers_out);
 
 void glDelProgram(GLuint* program);
 
