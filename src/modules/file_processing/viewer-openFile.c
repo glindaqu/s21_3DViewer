@@ -8,11 +8,6 @@ void open_file(ViewerAppWindow *self, GFile *file) {
     return;
   }
 
-  if (self->obj_file->fileName != NULL) {
-    removeObjFile(self->obj_file);
-    initParser(self->obj_file);
-  }
-
   self->obj_file->fileName = g_file_peek_path(file);
 
   if (parse(self->obj_file) != OK) {
