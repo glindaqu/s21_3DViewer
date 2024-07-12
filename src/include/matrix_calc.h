@@ -2,8 +2,6 @@
 #define _MATRIX_CALC_H
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include <string.h>
 
 enum { X_AXIS, Y_AXIS, Z_AXIS, N_AXES };
 
