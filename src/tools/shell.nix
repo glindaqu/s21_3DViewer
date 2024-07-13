@@ -18,7 +18,4 @@ stdenv.mkDerivation {
     cgif
     lcov
   ];
-  shellHook = ''
-     export XDG_DATA_DIRS=$GSETTINGS_SCHEMA_PATH
-  '';
 }
