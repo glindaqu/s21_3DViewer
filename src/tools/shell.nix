@@ -16,5 +16,9 @@ stdenv.mkDerivation {
     python3
     cglm
     cgif
+    lcov
   ];
+  shellHook = ''
+     export XDG_DATA_DIRS=$GSETTINGS_SCHEMA_PATH
+  '';
 }

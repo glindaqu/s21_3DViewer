@@ -2,6 +2,7 @@ CC?=gcc
 GCC_FLAGS = -Wall -Werror -Wextra -Wno-unused-function -g
 CHECK_FLAGS = $(shell pkg-config --cflags check) $(shell pkg-config --libs check)
 GTK_FLAGS = $(shell pkg-config --cflags gtk4) $(shell pkg-config --libs gtk4 cgif)
+GCOV_FLAGS = -fprofile-arcs -ftest-coverage
 UI_MODULES = modules/ui/resources.o modules/ui/viewer-app.o modules/file_processing/viewer-openFile.o \
 modules/opengl/viewer-glarea.o modules/ui/viewer-setLabel.o modules/ui/viewer-app-window.o \
 modules/ui/viewer-error.o modules/opengl/viewer-glfuncs.o modules/ui/viewer-app-settings.o \
@@ -43,14 +44,15 @@ build-ui:
 build-matrix_calc:
 	@$(MAKE) -C modules/matrix_calc
 
-test-parser: build-parser
+test-parser:
+	@$(MAKE) -C modules/parser lib-gcov
 	@checkmk tests/parser/parser.check > tests/parser/parser.c
-	@$(CC) --coverage $(GCC_FLAGS) $(CHECK_FLAGS) -I./include/ -L./include/ tests/parser/parser.c -o tests/parser/test-parser.out -lparser
+	@$(CC) $(GCC_FLAGS) $(CHECK_FLAGS) -I./include/ -L./include/ tests/parser/parser.c -o tests/parser/test-parser.out -lparser -lgcov
 	@./tests/parser/test-parser.out
 
 gcov-parser: test-parser
-	@lcov -t "test_coverage" -o test_coverage.info -c -d .
-	@genhtml -o test/parser/report test_coverage.info
+	@lcov -t "test_coverage" -o test_coverage.info -c -d . --ignore-errors range
+	@genhtml -o test/parser/report test_coverage.info --ignore-errors range
 
 clang-format-check:
 	@find . -name "*.c" -o -name "*.h" -o -name "*.cpp" | xargs clang-format -n --style=Google 
@@ -72,4 +74,6 @@ clear:
 	@find . -name "*.o" -o -name "*.a" -o -name "*.out" -o -name "*.gcda" -o -name "*.gcno" | xargs rm -rf
 	@rm -rf *.out
 	@rm -rf tests/parser/parser.c
+	@rm -rf test
+	@rm -rf *.info
 
