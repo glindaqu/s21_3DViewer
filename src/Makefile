@@ -88,6 +88,11 @@ clear:
 	@rm -rf tests/parser/parser.c
 	@rm -rf test
 	@rm -rf *.info
+	@rm -rf dist
 
 dvi: 
 	@doxygen
+
+dist: dvi build
+	@mkdir -p dist
+	@tar cf dist/3DViewer-1.0.tar 3DViewer.out docs/
