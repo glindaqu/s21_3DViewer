@@ -10,7 +10,6 @@ modules/model_movement/viewer-modelMovement.o modules/settings/viewer-settings.o
 modules/file_processing/viewer-gif.o
 
 INSTALL_DIR ?= ../../3DViewer
-
 EXECUTABLE = 3DViewer.out
 SCHEMA_PATH= modules/ui/
 
@@ -30,6 +29,7 @@ install: build $(EXECUTABLE)
 	@echo "Installing the application..."
 	@install -d $(INSTALL_DIR)
 	@install $(EXECUTABLE) $(INSTALL_DIR)
+	@bash ./gsettings.sh
 	@echo "Application installed to $(INSTALL_DIR)"
 
 uninstall:
