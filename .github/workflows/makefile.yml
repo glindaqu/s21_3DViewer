@@ -21,3 +21,6 @@ jobs:
 
     - name: Run check
       run: cd src/modules/parser && make test
+
+    - name: Run all
+      run: cd src && make
