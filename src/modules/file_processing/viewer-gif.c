@@ -129,9 +129,7 @@ void write_frames_to_gif(ViewerAppWindow* self) {
         .delay = entry->delay,
         .pImageData = entry->pImageData,
     };
-    if (cgif_addframe(self->gif, &frame_config) != CGIF_OK) {
-      fprintf(stderr, "Failed to add frame to GIF\n");
-    }
+    cgif_addframe(self->gif, &frame_config);
     free(entry->pImageData);
     free(entry);
   }

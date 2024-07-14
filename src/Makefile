@@ -9,6 +9,9 @@ modules/ui/viewer-error.o modules/opengl/viewer-glfuncs.o modules/ui/viewer-app-
 modules/model_movement/viewer-modelMovement.o modules/settings/viewer-settings.o modules/file_processing/viewer-screenshots.o \
 modules/file_processing/viewer-gif.o
 
+INSTALL_DIR ?= install
+BIN_DIR = $(INSTALL_DIR)/bin
+
 EXECUTABLE = 3DViewer.out
 SCHEMA_FILE = modules/ui/school21.gdy._3dviewer.gschema.xml
 
@@ -22,6 +25,14 @@ build: build-parser build-ui build-matrix_calc build-settings build-opengl build
 run: all
 	@echo "Running the application..."
 	GSETTINGS_SCHEMA_DIR=modules/ui ./3DViewer.out
+
+install: $(EXECUTABLE)
+	mkdir -p $(INSTALL_DIR)
+	install -d $(BIN_DIR)
+	install $(EXECUTABLE) $(BIN_DIR)
+
+uninstall:
+	rm -rf $(INSTALL_DIR)
 
 build-modelMovement:
 	@$(MAKE) -C modules/model_movement

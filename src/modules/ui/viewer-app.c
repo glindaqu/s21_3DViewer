@@ -64,8 +64,6 @@ static void on_window_destroy(gpointer data) {
   if (G_IS_APPLICATION(app)) {
     g_print("Quitting application\n");
     g_application_quit(app);
-  } else {
-    g_print("Invalid application instance\n");
   }
 }
 
