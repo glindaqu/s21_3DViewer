@@ -88,3 +88,5 @@ clear:
 	@rm -rf test
 	@rm -rf *.info
 
+dvi: 
+	@doxygen
