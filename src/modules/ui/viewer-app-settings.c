@@ -2,21 +2,6 @@
 
 #include <gtk/gtk.h>
 
-struct _ViewerAppSettings {
-  GtkDialog parent;
-
-  GSettings *settings;
-
-  GtkWidget *projection;
-  GtkWidget *edge_type;
-  GtkWidget *edge_color;
-  GtkWidget *edge_thickness_spin;
-  GtkWidget *point_type;
-  GtkWidget *point_color;
-  GtkWidget *point_size;
-  GtkWidget *background_color;
-};
-
 G_DEFINE_TYPE(ViewerAppSettings, viewer_app_settings, GTK_TYPE_DIALOG)
 
 static gboolean point_type_to_pos(GValue *value, GVariant *variant,

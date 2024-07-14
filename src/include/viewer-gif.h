@@ -10,6 +10,20 @@
 #define FRAME_COUNT (FPS * DURATION)
 
 /**
+ * @brief Структура кадра
+ *
+ * @param pImageData - данные кадра в формате RGB (uint8_t*)
+ * @param width - ширина кадра
+ * @param height - высота кадра
+ * @param delay - задержка кадра
+ */
+typedef struct {
+  uint8_t* pImageData;
+  uint16_t width;
+  uint16_t height;
+  int delay;
+} FrameBufferEntry;
+/**
  * @brief Добавление кадра в буфер
  *
  * @param self - указатель на окно

@@ -4,24 +4,12 @@
 
 #include "../../include/viewer-app-window.h"
 
-struct _ViewerApp {
-  GtkApplication parent_instance;
-  GtkWidget *window;
-};
-
-struct _ViewerAppClass {
-  GtkApplicationClass parent_class;
-};
-
 G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 
 static void quit_activated(UNUSED GSimpleAction *action,
                            UNUSED GVariant *parameter, gpointer app) {
   ViewerApp *self = VIEWER_APP(app);
-  g_print("Quitting application\n");
-
   if (self->window) {
-    g_print("Disposing window\n");
     g_object_run_dispose(G_OBJECT(self->window));
   }
 
@@ -59,10 +47,8 @@ static void viewer_app_startup(GApplication *app) {
 }
 
 static void on_window_destroy(gpointer data) {
-  g_print("Window destroyed\n");
   GApplication *app = G_APPLICATION(data);
   if (G_IS_APPLICATION(app)) {
-    g_print("Quitting application\n");
     g_application_quit(app);
   }
 }
@@ -71,17 +57,18 @@ static void viewer_app_activate(GApplication *app) {
   ViewerApp *self = VIEWER_APP(app);
 
   if (self->window == NULL) {
-    g_print("Creating new window\n");
     self->window = viewer_app_window_new(VIEWER_APP(app));
+
     if (self->window == NULL) {
+#ifdef DEBUG
       g_error("Failed to create window\n");
+#endif
       return;
     }
     g_signal_connect(self->window, "destroy", G_CALLBACK(on_window_destroy),
                      app);
   }
 
-  g_print("Presenting window\n");
   gtk_window_present(GTK_WINDOW(self->window));
 }
 

@@ -17,6 +17,8 @@ void open_file(ViewerAppWindow *self, GFile *file) {
 
   gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
 
+#ifdef DEBUG
+
   GLenum err;
   while ((err = glGetError()) != GL_NO_ERROR) {
     g_warning("OpenGL error before glDrawElements: %d\n", err);
@@ -28,6 +30,7 @@ void open_file(ViewerAppWindow *self, GFile *file) {
     g_error_free(error);
     return;
   }
+#endif
 
   glDelBuffers(&self->gl_buffers);
 

@@ -9,11 +9,13 @@ void gl_init(ViewerAppWindow *self) {
   gtk_gl_area_make_current(GTK_GL_AREA(self->gl_drawing_area));
 
   GError *error = gtk_gl_area_get_error(GTK_GL_AREA(self->gl_drawing_area));
+#ifdef DEBUG
   if (error != NULL) {
     g_warning("GL area error: %s", error->message);
     g_error_free(error);
     return;
   }
+#endif
   glEnable(GL_BLEND);
   glDepthFunc(GL_LESS);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -84,13 +86,6 @@ void gl_draw_points(ViewerAppWindow *self) {
                    GL_UNSIGNED_INT, 0);
   }
 }
-
-typedef struct {
-  ViewerAppWindow *self;
-  uint8_t *frame_data;
-  uint16_t width;
-  uint16_t height;
-} FrameData;
 
 void gl_model_draw(ViewerAppWindow *self) {
   gl_draw_lines(self);

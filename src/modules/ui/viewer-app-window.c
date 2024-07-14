@@ -33,20 +33,24 @@ static void show_about_dialog(UNUSED GVariant *parameter, gpointer user_data) {
   GBytes *bytes = g_resources_lookup_data(
       "/src/modules/ui/school21/gdy/_3dviewer/resources/icons/icon.png", 0,
       NULL);
+#ifdef DEBUG
   if (bytes == NULL) {
     g_warning("Failed to load icon");
     return;
   }
+#endif
 
   GInputStream *stream = g_memory_input_stream_new_from_bytes(bytes);
   GdkPixbuf *logo = gdk_pixbuf_new_from_stream(stream, NULL, NULL);
   g_object_unref(stream);
   g_bytes_unref(bytes);
 
+#ifdef DEBUG
   if (logo == NULL) {
     g_warning("Failed to create pixbuf from stream");
     return;
   }
+#endif
 
   GdkTexture *texture = gdk_texture_new_for_pixbuf(logo);
   GdkPaintable *paintable_logo = GDK_PAINTABLE(texture);
@@ -59,20 +63,16 @@ static void show_about_dialog(UNUSED GVariant *parameter, gpointer user_data) {
 static void viewer_app_window_dispose(GObject *object) {
   ViewerAppWindow *win = VIEWER_APP_WINDOW(object);
 
-  g_print("Disposing ViewerAppWindow\n");
-
   g_clear_object(&win->settings);
 
   free_frame_buffer();
 
   if (win->mvp_matrix) {
-    g_print("Freeing mvp_matrix\n");
     free(win->mvp_matrix);
     win->mvp_matrix = NULL;
   }
 
   if (win->obj_file) {
-    g_print("Removing and freeing obj_file\n");
     removeObjFile(win->obj_file);
     free(win->obj_file);
     win->obj_file = NULL;

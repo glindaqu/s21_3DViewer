@@ -9,11 +9,10 @@ modules/ui/viewer-error.o modules/opengl/viewer-glfuncs.o modules/ui/viewer-app-
 modules/model_movement/viewer-modelMovement.o modules/settings/viewer-settings.o modules/file_processing/viewer-screenshots.o \
 modules/file_processing/viewer-gif.o
 
-INSTALL_DIR ?= install
-BIN_DIR = $(INSTALL_DIR)/bin
+INSTALL_DIR ?= ../../3DViewer
 
 EXECUTABLE = 3DViewer.out
-SCHEMA_FILE = modules/ui/school21.gdy._3dviewer.gschema.xml
+SCHEMA_PATH= modules/ui/
 
 .PHONY: all build clean clang-format clang-format-check clear install uninstall
 
@@ -26,10 +25,12 @@ run: all
 	@echo "Running the application..."
 	GSETTINGS_SCHEMA_DIR=modules/ui ./3DViewer.out
 
-install: $(EXECUTABLE)
-	mkdir -p $(INSTALL_DIR)
-	install -d $(BIN_DIR)
-	install $(EXECUTABLE) $(BIN_DIR)
+
+install: build $(EXECUTABLE)
+	@echo "Installing the application..."
+	@install -d $(INSTALL_DIR)
+	@install $(EXECUTABLE) $(INSTALL_DIR)
+	@echo "Application installed to $(INSTALL_DIR)"
 
 uninstall:
 	rm -rf $(INSTALL_DIR)

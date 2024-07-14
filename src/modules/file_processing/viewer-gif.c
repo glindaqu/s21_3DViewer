@@ -2,13 +2,6 @@
 
 #include <glib.h>
 
-typedef struct {
-  uint8_t* pImageData;
-  uint16_t width;
-  uint16_t height;
-  int delay;
-} FrameBufferEntry;
-
 static GQueue* frame_buffer = NULL;
 static const int MAX_FRAMES = 5 * 10;
 
@@ -37,32 +30,37 @@ void free_frame_buffer(void) {
 void write_frames_to_gif(ViewerAppWindow* self);
 static void stop_recording(ViewerAppWindow* self) {
   if (self->recording) {
-    int result = cgif_close(self->gif);
+    UNUSED int result = cgif_close(self->gif);
+    self->recording = FALSE;
+#ifdef DEBUG
     if (result != CGIF_OK) {
       g_print("Failed to close GIF file: %d\n", result);
     }
     if (self->gif == NULL) {
       g_print("Failed to recreate GIF file\n");
     }
-    self->recording = FALSE;
+#endif
     g_print("Recording finished\n");
   }
 }
 uint8_t* capture_frame_from_opengl(uint16_t width, uint16_t height) {
   uint8_t* pixels = (uint8_t*)malloc(width * height * 3);
+#ifdef DEBUG
   if (!pixels) {
     g_print("Failed to allocate memory for frame capture\n");
     return NULL;
   }
-
+#endif
   glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
   uint8_t* flippedPixels = (uint8_t*)malloc(width * height * 3);
+#ifdef DEBUG
   if (!flippedPixels) {
     free(pixels);
     g_print("Failed to allocate memory for frame flip capture\n");
     return NULL;
   }
+#endif
 
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
@@ -81,7 +79,9 @@ uint8_t* capture_frame_from_opengl(uint16_t width, uint16_t height) {
 
 void add_frame_to_buffer(ViewerAppWindow* self, const uint8_t* rgb_data,
                          uint16_t width, uint16_t height) {
+#ifdef DEBUG
   g_print("Add frame to buffer\n");
+#endif
   uint8_t* pImageData = malloc(width * height);
   const int32_t palette_red = self->background_color.red * 255 +
                               self->background_color.green * 255 +
@@ -105,11 +105,13 @@ void add_frame_to_buffer(ViewerAppWindow* self, const uint8_t* rgb_data,
   }
 
   FrameBufferEntry* entry = malloc(sizeof(FrameBufferEntry));
+#ifdef DEBUG
   if (entry == NULL) {
     g_print("Failed to allocate memory for FrameBufferEntry\n");
     free(pImageData);
     return;
   }
+#endif
   entry->pImageData = pImageData;
   entry->width = width;
   entry->height = height;
@@ -162,9 +164,12 @@ static void save_gif_callback(GtkFileDialog* dialog, GAsyncResult* result,
       self->frame_counter = 0;
       g_print("Recording started\n");
       init_frame_buffer();
-    } else {
+    }
+#ifdef DEBUG
+    else {
       g_print("Failed to create GIF file\n");
     }
+#endif
     g_free(filename);
     g_object_unref(file);
   }
