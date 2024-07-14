@@ -67,3 +67,6 @@ dkms.conf
 
 # allow 3d object files
 !./src/data/*.obj
+
+
+src/report/
