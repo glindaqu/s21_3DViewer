@@ -2,50 +2,71 @@
   <schema id="school21.gdy._3dviewer" path="/src/modules/ui/school21/gdy/3dviewer/">
     <!-- Настройки проекции -->
     <key name="projection-type" type="s">
-      <default>'parallel'</default>
+      <choices>
+        <choice value ="Parallel"/>
+        <choice value ="Central"/>
+      </choices>
+      <default>'Parallel'</default>
       <summary>Type of projection</summary>
       <description>The type of projection to use (parallel or central).</description>
     </key>
 
+    <!-- Настройки точек -->
+    <key name="point-type" type="s">
+      <choices>
+        <choice value ="None"/>
+        <choice value ="Circle"/>
+        <choice value ="Square"/>
+      </choices>
+      <default>'None'</default>
+      <summary>Type of points</summary>
+      <description>The type of points to display (none, circle or square).</description>
+    </key>
+
+    <!-- Настройки точек -->
+    <key name="point-size" type="i">
+      <default>1</default>
+      <summary>Point size</summary>
+      <description>The size of the points.</description>
+    </key>
+
+    <!-- Настройки цвета точек -->
+    <key name="point-color" type="(iiii)">
+      <default>(1,1,1,1)</default>
+      <summary>Points color</summary>
+      <description>The color of the points.</description>
+    </key>
+
     <!-- Настройки ребер -->
     <key name="edge-type" type="s">
-      <default>'solid'</default>
+      <choices>
+        <choice value ="Solid"/>
+        <choice value ="Dashed"/>
+      </choices>
+      <default>'Solid'</default>
       <summary>Type of edges</summary>
       <description>The type of edges to display (solid or dashed).</description>
     </key>
-    <key name="edge-color" type="s">
-      <default>'#000000'</default>
-      <summary>Color of edges</summary>
-      <description>The color of the edges in hexadecimal format.</description>
-    </key>
+
+    <!-- Настройки толщины линий -->
     <key name="edge-thickness" type="i">
       <default>1</default>
-      <summary>Thickness of edges</summary>
-      <description>The thickness of the edges in pixels.</description>
+      <summary>Edge thickness</summary>
+      <description>The thickness of the edges.</description>
     </key>
 
-    <!-- Настройки вершин -->
-    <key name="vertex-display" type="s">
-      <default>'circle'</default>
-      <summary>Display method of vertices</summary>
-      <description>The method of displaying vertices (none, circle, square).</description>
-    </key>
-    <key name="vertex-color" type="s">
-      <default>'#000000'</default>
-      <summary>Color of vertices</summary>
-      <description>The color of the vertices in hexadecimal format.</description>
-    </key>
-    <key name="vertex-size" type="i">
-      <default>3</default>
-      <summary>Size of vertices</summary>
-      <description>The size of the vertices in pixels.</description>
+    <!-- Настройки цвета ребер -->
+    <key name="edge-color" type="(iiii)">
+      <default>(1,1,1,1)</default>
+      <summary>Edges color</summary>
+      <description>The color of the edges.</description>
     </key>
 
-    <!-- Настройка цвета фона -->
-    <key name="background-color" type="s">
-      <default>'#FFFFFF'</default>
+    <!-- Настройки цвета фона -->
+    <key name="background-color" type="(iiii)">
+      <default>(0,0,0,1)</default>
       <summary>Background color</summary>
-      <description>The background color in hexadecimal format.</description>
+      <description>The color of the background.</description>
     </key>
   </schema>
 </schemalist>

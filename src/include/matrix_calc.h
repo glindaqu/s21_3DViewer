@@ -2,8 +2,6 @@
 #define _MATRIX_CALC_H
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include <string.h>
 
 enum { X_AXIS, Y_AXIS, Z_AXIS, N_AXES };
 
@@ -15,9 +13,9 @@ enum { X_AXIS, Y_AXIS, Z_AXIS, N_AXES };
  * @author yukikoqo
  */
 typedef struct {
-  double rotation_angles[N_AXES];
-  double translation_vector[N_AXES];
-  double scale_vector[N_AXES];
+  float rotation_angles[N_AXES];
+  float translation_vector[N_AXES];
+  float scale_vector[N_AXES];
 } mvp_matrix_movement_t;
 
 /** @brief Матрица преобразования

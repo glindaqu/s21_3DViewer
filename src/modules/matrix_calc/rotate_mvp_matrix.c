@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "../../include/matrix_calc.h"
 
 void rotate_mvp_matrix(gl_matrix *res, float angle1, float angle2,

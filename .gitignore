@@ -1,5 +1,13 @@
+#test
+/src/tests/parser/parser.c
+
 #vscode
 .vscode
+
+#gcov
+*.gcda
+*.gcno
+*.info
 
 #gtk
 resources.c
@@ -66,7 +74,4 @@ Mkfile.old
 dkms.conf
 
 # allow 3d object files
-!./src/data/*.obj
-
-
-src/report/
+!/src/data/*.obj

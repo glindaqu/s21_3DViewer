@@ -4,14 +4,14 @@
 
 #test parser_test_1
     ObjFile_t* objFile = calloc(1, sizeof(ObjFile_t));
-    objFile->fileName = "data/cube.obj";
+    objFile->fileName = "data/cube2.obj";
     ParserReturnCode result = parse(objFile);
     removeObjFile(objFile);
     free(objFile);
     fail_unless(result == OK);
 
 #test parser_test_2
-    const char path[] = "data/monkeyyyy.obj";
+    const char path[] = "data/monkeyyyyyy.obj";
     ObjFile_t objFile = {0};
     objFile.fileName = path;
     ParserReturnCode result = parse(&objFile);
@@ -19,7 +19,7 @@
 
 #test parser_test_3
     ObjFile_t* objFile = calloc(1, sizeof(ObjFile_t));
-    objFile->fileName = "data/cube.obj";
+    objFile->fileName = "data/cube2.obj";
     ParserReturnCode result = parse(objFile);
     Vertex_t vertex[8] = {0};
     /*#8 vertices, 6 faces

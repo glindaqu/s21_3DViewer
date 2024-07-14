@@ -2,6 +2,7 @@
 #define _3DVIEWER_APP_H
 
 #include <gtk/gtk.h>
+#define UNUSED __attribute__((unused))
 
 G_BEGIN_DECLS
 

@@ -14,6 +14,8 @@ stdenv.mkDerivation {
     libepoxy
     valgrind
     python3
-    gdb
+    cglm
+    cgif
+    lcov
   ];
 }

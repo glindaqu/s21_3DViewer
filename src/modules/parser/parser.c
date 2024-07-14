@@ -13,14 +13,14 @@ static void readSurface(ObjFile_t* file, char* line);
 static int checkFileFormat(ObjFile_t* file);
 
 ParserReturnCode parse(ObjFile_t* file) {
-  removeObjFile(file);
-  initParser(file);
   FILE* objFilePtr = fopen(file->fileName, "r");
   if (objFilePtr == NULL) {
     return FILE_DOES_NOT_EXISTS;
   } else if (checkFileFormat(file) == -1) {
     return INVALID_FILE_FORMAT;
   }
+  removeObjFile(file);
+  initParser(file);
   setlocale(LC_NUMERIC, "C");
   char* line = NULL;
   size_t readChars = 0;

@@ -1,13 +1,11 @@
-#include "viewer-app.h"
+#include "../../include/viewer-app.h"
 
 #include <gtk/gtk.h>
 
-#include "viewer-app-settings.h"
-#include "viewer-app-window.h"
+#include "../../include/viewer-app-window.h"
 
 struct _ViewerApp {
   GtkApplication parent_instance;
-
   GtkWidget *window;
 };
 
@@ -17,33 +15,20 @@ struct _ViewerAppClass {
 
 G_DEFINE_TYPE(ViewerApp, viewer_app, GTK_TYPE_APPLICATION)
 
-static void preferences_activated(GSimpleAction *action, GVariant *parameter,
-                                  gpointer app) {
-  ViewerAppSettings *prefs;
-  GtkWindow *win;
+static void quit_activated(UNUSED GSimpleAction *action,
+                           UNUSED GVariant *parameter, gpointer app) {
+  ViewerApp *self = VIEWER_APP(app);
+  g_print("Quitting application\n");
 
-  win = gtk_application_get_active_window(GTK_APPLICATION(app));
-  prefs = viewer_app_settings_new(VIEWER_APP_WINDOW(win));
-  gtk_window_present(GTK_WINDOW(prefs));
-}
-
-static void quit_activated(GSimpleAction *action, GVariant *parameter,
-                           gpointer app) {
-  const gchar *action_name = g_action_get_name(G_ACTION(action));
-  g_print("Action name: %s\n", action_name);
-
-  if (parameter != NULL) {
-    const gchar *param_str = g_variant_get_string(parameter, NULL);
-    g_print("Parameter value: %s\n", param_str);
-  } else {
-    g_print("No parameter provided\n");
+  if (self->window) {
+    g_print("Disposing window\n");
+    g_object_run_dispose(G_OBJECT(self->window));
   }
 
   g_application_quit(G_APPLICATION(app));
 }
 
 static GActionEntry app_entries[] = {
-    {"preferences", preferences_activated, NULL, NULL, NULL, {0}},
     {"quit", quit_activated, NULL, NULL, NULL, {0}}};
 
 static void viewer_app_init(ViewerApp *self) {
@@ -73,13 +58,32 @@ static void viewer_app_startup(GApplication *app) {
                                   G_N_ELEMENTS(app_entries), app);
 }
 
+static void on_window_destroy(gpointer data) {
+  g_print("Window destroyed\n");
+  GApplication *app = G_APPLICATION(data);
+  if (G_IS_APPLICATION(app)) {
+    g_print("Quitting application\n");
+    g_application_quit(app);
+  } else {
+    g_print("Invalid application instance\n");
+  }
+}
+
 static void viewer_app_activate(GApplication *app) {
   ViewerApp *self = VIEWER_APP(app);
 
   if (self->window == NULL) {
+    g_print("Creating new window\n");
     self->window = viewer_app_window_new(VIEWER_APP(app));
+    if (self->window == NULL) {
+      g_error("Failed to create window\n");
+      return;
+    }
+    g_signal_connect(self->window, "destroy", G_CALLBACK(on_window_destroy),
+                     app);
   }
 
+  g_print("Presenting window\n");
   gtk_window_present(GTK_WINDOW(self->window));
 }
 
