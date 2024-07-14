@@ -1,4 +1,5 @@
 #include "../../include/parser.h"
+#include "parser.h"
 
 #include <locale.h>
 #include <stdio.h>
@@ -11,6 +12,7 @@ static void readVertex(ObjFile_t* file, char* line);
 static void readNormal(ObjFile_t* file, char* line);
 static void readSurface(ObjFile_t* file, char* line);
 static int checkFileFormat(ObjFile_t* file);
+static void readSurface(ObjFile_t* file, char* line);
 
 ParserReturnCode parse(ObjFile_t* file) {
   FILE* objFilePtr = fopen(file->fileName, "r");
@@ -22,6 +24,7 @@ ParserReturnCode parse(ObjFile_t* file) {
   removeObjFile(file);
   initParser(file);
   setlocale(LC_NUMERIC, "C");
+  }
   char* line = NULL;
   size_t readChars = 0;
   while (getline(&line, &readChars, objFilePtr) != EOF) {
@@ -65,6 +68,7 @@ void initParser(ObjFile_t* file) {
   file->vertices = NULL;
   file->normals = NULL;
   file->surfaces = NULL;
+  return OK;
 }
 
 static void readVertex(ObjFile_t* file, char* line) {
@@ -112,4 +116,26 @@ static void readSurface(ObjFile_t* file, char* line) {
     surface->verticesIndices[i]--;
     surface->normalsIndices[i]--;
   }
+  if (strstr(line, "//"))
+    sscanf(line, "f %d//%*f %d//%*f %d//%*f", &surface->verticesIndices[0],
+           &surface->verticesIndices[1], &surface->verticesIndices[2]);
+  else if (strchr(line, '/'))
+    sscanf(line, "f %d/%*f/%*f %d/%*f/%*f %d/%*f/%*f",
+           &surface->verticesIndices[0], &surface->verticesIndices[1],
+           &surface->verticesIndices[2]);
+  else
+    sscanf(line, "f %d %d %d", &surface->verticesIndices[0],
+           &surface->verticesIndices[1], &surface->verticesIndices[2]);
+}
+
+void removeObjFile(ObjFile_t* file) {
+  for (int i = 0; i < file->verticesCount; i++) {
+    free(file->vertices[i]);
+  }
+  free(file->vertices);
+  for (int i = 0; i < file->surfacesCount; i++) {
+    free(file->surfaces[i]->verticesIndices);
+    free(file->surfaces[i]);
+  }
+  free(file->surfaces);
 }

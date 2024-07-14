@@ -16,7 +16,7 @@ obj/parser.o: parser.c
 
 $(LIB): obj/parser.o
 	@ar rcs $(LIB) obj/parser.o
-
+ 
 rebuild: clear build
 
 clear:
@@ -29,4 +29,3 @@ makeObjDir:
 
 style:
 	@clang-format --style=Google -i *.c *.h
-	
